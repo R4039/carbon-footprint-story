@@ -1,0 +1,78 @@
+import { Link, useRouterState } from "@tanstack/react-router";
+import { Trees, Target, Users, BookOpen } from "lucide-react";
+import type { ReactNode } from "react";
+
+const NAV = [
+  { to: "/", label: "My Forest", icon: Trees },
+  { to: "/missions", label: "Challenges", icon: Target },
+  { to: "/community", label: "Community", icon: Users },
+  { to: "/story", label: "Story", icon: BookOpen },
+] as const;
+
+export function AppShell({ children, level }: { children: ReactNode; level?: string }) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  return (
+    <div className="min-h-screen bg-cream text-stone-900">
+      <nav className="sticky top-0 z-40 border-b border-stone-100 bg-cream/85 backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 md:px-8">
+          <Link to="/" className="flex shrink-0 items-center gap-2.5">
+            <div className="grid size-10 place-items-center rounded-xl bg-forest">
+              <div className="size-4 animate-pulse-soft rounded-full bg-sage" />
+            </div>
+            <span className="text-xl font-bold tracking-tight text-forest">Carbon Tree</span>
+          </Link>
+
+          <div className="hidden items-center gap-1 md:flex">
+            {NAV.map((item) => {
+              const active = item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                    active ? "bg-sage-soft text-forest" : "text-stone-500 hover:text-forest"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
+
+          <div className="flex items-center gap-3">
+            {level && (
+              <div className="hidden rounded-full border border-sage/40 bg-sage/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-forest sm:block">
+                {level}
+              </div>
+            )}
+            <div className="grid size-9 place-items-center rounded-full bg-bloom-soft text-sm font-bold text-forest">
+              E
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {children}
+
+      {/* Mobile bottom nav */}
+      <nav className="fixed inset-x-4 bottom-4 z-40 mx-auto flex max-w-sm items-center justify-around rounded-2xl border border-white/60 bg-white/85 px-2 py-2 shadow-eco backdrop-blur-md md:hidden">
+        {NAV.map((item) => {
+          const Icon = item.icon;
+          const active = item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
+          return (
+            <Link
+              key={item.to}
+              to={item.to}
+              className={`flex flex-col items-center gap-0.5 rounded-xl px-3 py-1.5 ${
+                active ? "text-forest" : "text-stone-400"
+              }`}
+            >
+              <Icon className="size-5" strokeWidth={active ? 2.4 : 1.8} />
+              <span className="text-[10px] font-semibold">{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+    </div>
+  );
+}
