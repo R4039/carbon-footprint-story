@@ -1,9 +1,10 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Trees, Target, Users, BookOpen } from "lucide-react";
+import { Trees, Target, Users, BookOpen, ClipboardCheck } from "lucide-react";
 import type { ReactNode } from "react";
 
 const NAV = [
   { to: "/", label: "My Forest", icon: Trees },
+  { to: "/check-in", label: "Check-In", icon: ClipboardCheck },
   { to: "/missions", label: "Challenges", icon: Target },
   { to: "/community", label: "Community", icon: Users },
   { to: "/story", label: "Story", icon: BookOpen },

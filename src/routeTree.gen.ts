@@ -13,6 +13,7 @@ import { Route as StoryRouteImport } from './routes/story'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as MissionsRouteImport } from './routes/missions'
 import { Route as CommunityRouteImport } from './routes/community'
+import { Route as CheckInRouteImport } from './routes/check-in'
 import { Route as IndexRouteImport } from './routes/index'
 
 const StoryRoute = StoryRouteImport.update({
@@ -35,6 +36,11 @@ const CommunityRoute = CommunityRouteImport.update({
   path: '/community',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckInRoute = CheckInRouteImport.update({
+  id: '/check-in',
+  path: '/check-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -43,6 +49,7 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/check-in': typeof CheckInRoute
   '/community': typeof CommunityRoute
   '/missions': typeof MissionsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/check-in': typeof CheckInRoute
   '/community': typeof CommunityRoute
   '/missions': typeof MissionsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/check-in': typeof CheckInRoute
   '/community': typeof CommunityRoute
   '/missions': typeof MissionsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -65,14 +74,28 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/community' | '/missions' | '/sitemap.xml' | '/story'
+  fullPaths:
+    | '/'
+    | '/check-in'
+    | '/community'
+    | '/missions'
+    | '/sitemap.xml'
+    | '/story'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/community' | '/missions' | '/sitemap.xml' | '/story'
-  id: '__root__' | '/' | '/community' | '/missions' | '/sitemap.xml' | '/story'
+  to: '/' | '/check-in' | '/community' | '/missions' | '/sitemap.xml' | '/story'
+  id:
+    | '__root__'
+    | '/'
+    | '/check-in'
+    | '/community'
+    | '/missions'
+    | '/sitemap.xml'
+    | '/story'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CheckInRoute: typeof CheckInRoute
   CommunityRoute: typeof CommunityRoute
   MissionsRoute: typeof MissionsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -109,6 +132,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommunityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/check-in': {
+      id: '/check-in'
+      path: '/check-in'
+      fullPath: '/check-in'
+      preLoaderRoute: typeof CheckInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -121,6 +151,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CheckInRoute: CheckInRoute,
   CommunityRoute: CommunityRoute,
   MissionsRoute: MissionsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
