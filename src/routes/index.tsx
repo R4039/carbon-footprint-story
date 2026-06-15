@@ -97,7 +97,13 @@ function Dashboard() {
               </button>
             </div>
 
-            <ForestIsland level={forestLevel} health={health} isNight={isNight} season={season} />
+            <ForestIsland
+              level={forestLevel}
+              health={health}
+              isNight={isNight}
+              season={season}
+              entriesCount={history.entries.length}
+            />
 
             <div className="mt-5">
               <div className="mb-2 flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider text-stone-500">
