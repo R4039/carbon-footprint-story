@@ -163,3 +163,100 @@
   backdrop-filter: blur(16px) saturate(140%);
   border: 1px solid rgba(149, 213, 178, 0.2);
 }
+
+/* ===== Premium additions (ported to v4) ===== */
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+@keyframes bobbing {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-8px) rotate(2deg); }
+  75% { transform: translateY(-8px) rotate(-2deg); }
+}
+@keyframes flutter {
+  0%, 100% { transform: translateX(0) scale(1); }
+  50% { transform: translateX(20px) scale(0.95); }
+}
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.6; filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.6)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.8)); }
+}
+@keyframes firefly {
+  0%, 100% { transform: translate(0, 0); opacity: 0.6; filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.8)); }
+  50% { transform: translate(30px, -30px); opacity: 1; filter: drop-shadow(0 0 15px rgba(34, 197, 94, 1)); }
+}
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@utility animate-float-gentle { animation: float-gentle 6s ease-in-out infinite; }
+@utility animate-bobbing { animation: bobbing 3s ease-in-out infinite; }
+@utility animate-flutter { animation: flutter 2s ease-in-out infinite; }
+@utility animate-glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
+@utility animate-firefly { animation: firefly 4s ease-in-out infinite; }
+@utility animate-fade-in-up { animation: fade-in-up 0.5s ease-out both; }
+@utility animate-slide-in-right { animation: slide-in-right 0.5s ease-out both; }
+
+@utility shadow-glow-emerald {
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+}
+@utility shadow-glow-amber {
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.2);
+}
+@utility shadow-glow-blue {
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.25);
+}
+@utility shadow-neon-firefly {
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.6), 0 0 30px rgba(34, 197, 94, 0.3);
+}
+
+@utility glass-card {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(31, 116, 85, 0.05), 0 4px 16px rgba(31, 116, 85, 0.03);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+@utility hover-lift {
+  transition: transform 0.3s ease;
+  &:hover { transform: translateY(-4px); }
+}
+
+@utility shimmer {
+  animation: shimmer 2s infinite;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 20%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 1000px 100%;
+}
+
+@utility text-gradient {
+  background: linear-gradient(90deg, #059669, #0EA5E9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
