@@ -608,13 +608,15 @@ function buildAnimals(level: number) {
 }
 
 function buildButterflies(level: number) {
-  const n = [0, 2, 4, 6, 8, 11][level];
-  const colors = ["#ff5e8a", "#ffd166", "#a78bfa", "#fb923c", "#34d399", "#5ac8ff"];
+  const n = [0, 2, 4, 6, 9, 13][level];
+  const colors = ["#ff5e8a", "#ffd166", "#a78bfa", "#fb923c", "#34d399", "#5ac8ff", "#f472b6"];
+  const accents = ["#ffd166", "#ff5e8a", "#5ac8ff", "#fff58a", "#a78bfa", "#34d399", "#fff"];
   return Array.from({ length: n }).map((_, i) => ({
     left: 10 + ((i * 17) % 75),
     top: 30 + ((i * 13) % 45),
     delay: (i % 5) * 0.6,
     color: colors[i % colors.length],
+    accent: accents[i % accents.length],
   }));
 }
 
