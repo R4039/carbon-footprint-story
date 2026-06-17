@@ -273,7 +273,7 @@ export function ForestIsland({
           }}
           aria-hidden
         >
-          <Butterfly color={b.color} />
+          <Butterfly color={b.color} accent={b.accent} />
         </span>
       ))}
 
