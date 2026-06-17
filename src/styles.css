@@ -89,25 +89,36 @@
 }
 
 .dark {
-  --background: oklch(0.18 0.02 150);
+  --background: oklch(0.18 0.02 240);
   --foreground: oklch(0.96 0.01 95);
-  --card: oklch(0.22 0.03 150);
+  --card: oklch(0.22 0.03 240);
   --card-foreground: oklch(0.96 0.01 95);
-  --popover: oklch(0.22 0.03 150);
+  --popover: oklch(0.22 0.03 240);
   --popover-foreground: oklch(0.96 0.01 95);
   --primary: oklch(0.82 0.13 150);
   --primary-foreground: oklch(0.18 0.02 150);
-  --secondary: oklch(0.3 0.04 150);
+  --secondary: oklch(0.3 0.04 240);
   --secondary-foreground: oklch(0.96 0.01 95);
-  --muted: oklch(0.3 0.04 150);
+  --muted: oklch(0.3 0.04 240);
   --muted-foreground: oklch(0.72 0.02 150);
-  --accent: oklch(0.3 0.04 150);
+  --accent: oklch(0.3 0.04 240);
   --accent-foreground: oklch(0.96 0.01 95);
   --destructive: oklch(0.65 0.2 28);
   --destructive-foreground: oklch(0.96 0.01 95);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 16%);
   --ring: oklch(0.6 0.1 155);
+
+  /* Flip Eco-Luxe palette so existing semantic classes adapt */
+  --forest: #E8FFF2;
+  --forest-deep: #B9F5D0;
+  --sage: #34D399;
+  --sage-soft: #143028;
+  --sky: #0E1A35;
+  --bloom: #FF9EB5;
+  --bloom-soft: #2A1820;
+  --earth: #8B9080;
+  --cream: #0A101C;
 }
 
 @layer base {
@@ -119,8 +130,26 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    transition: background-color 0.5s ease, color 0.5s ease;
   }
 }
+
+@keyframes wing-flap {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(0.55); }
+}
+@keyframes pop-in {
+  0% { transform: scale(0.4); opacity: 0; }
+  60% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes grow-pulse {
+  0% { transform: scale(1); filter: brightness(1); }
+  35% { transform: scale(1.02); filter: brightness(1.15) saturate(1.2); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+@utility animate-pop-in { animation: pop-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@utility animate-grow-pulse { animation: grow-pulse 1.6s ease-out; }
 
 @keyframes sway {
   0%, 100% { transform: rotate(-1.2deg); }
