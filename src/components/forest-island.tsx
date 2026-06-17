@@ -273,7 +273,7 @@ export function ForestIsland({
           }}
           aria-hidden
         >
-          <Butterfly color={b.color} />
+          <Butterfly color={b.color} accent={b.accent} />
         </span>
       ))}
 
@@ -380,16 +380,30 @@ function Cloud({ className = "", style }: { className?: string; style?: React.CS
   );
 }
 
-function Butterfly({ color }: { color: string }) {
+function Butterfly({ color, accent }: { color: string; accent: string }) {
   return (
-    <svg viewBox="0 0 24 18" className="size-6">
-      <g>
-        <ellipse cx="8" cy="9" rx="6" ry="7" fill={color} />
-        <ellipse cx="16" cy="9" rx="6" ry="7" fill={color} />
-        <circle cx="8" cy="6" r="1.6" fill="rgba(255,255,255,0.85)" />
-        <circle cx="16" cy="6" r="1.6" fill="rgba(255,255,255,0.85)" />
-        <rect x="11.5" y="3" width="1" height="12" rx="0.5" fill="#3b2a1a" />
+    <svg viewBox="0 0 32 24" className="size-7 overflow-visible">
+      {/* Left wing pair */}
+      <g style={{ transformOrigin: "16px 12px", animation: "wing-flap 0.32s ease-in-out infinite" }}>
+        <path d="M16 12 C 6 2, 0 4, 2 12 C 0 18, 8 22, 16 14 Z" fill={color} />
+        <path d="M16 12 C 8 8, 4 8, 4 12 C 4 16, 10 18, 16 13 Z" fill={accent} opacity="0.85" />
+        <circle cx="6" cy="10" r="1.6" fill="#fff" opacity="0.9" />
+        <circle cx="6" cy="10" r="0.7" fill="#1a1a2e" />
+        <circle cx="10" cy="15" r="1" fill="#fff" opacity="0.7" />
       </g>
+      {/* Right wing pair (mirrored) */}
+      <g style={{ transformOrigin: "16px 12px", animation: "wing-flap 0.32s ease-in-out infinite", transform: "scaleX(-1)", transformBox: "fill-box" }}>
+        <path d="M16 12 C 6 2, 0 4, 2 12 C 0 18, 8 22, 16 14 Z" fill={color} />
+        <path d="M16 12 C 8 8, 4 8, 4 12 C 4 16, 10 18, 16 13 Z" fill={accent} opacity="0.85" />
+        <circle cx="6" cy="10" r="1.6" fill="#fff" opacity="0.9" />
+        <circle cx="6" cy="10" r="0.7" fill="#1a1a2e" />
+        <circle cx="10" cy="15" r="1" fill="#fff" opacity="0.7" />
+      </g>
+      {/* Body + antennae */}
+      <ellipse cx="16" cy="12" rx="0.9" ry="6" fill="#2a1a0a" />
+      <circle cx="16" cy="6.5" r="1" fill="#2a1a0a" />
+      <path d="M16 6 Q 14 3 12 2" stroke="#2a1a0a" strokeWidth="0.5" fill="none" strokeLinecap="round" />
+      <path d="M16 6 Q 18 3 20 2" stroke="#2a1a0a" strokeWidth="0.5" fill="none" strokeLinecap="round" />
     </svg>
   );
 }
@@ -594,13 +608,15 @@ function buildAnimals(level: number) {
 }
 
 function buildButterflies(level: number) {
-  const n = [0, 2, 4, 6, 8, 11][level];
-  const colors = ["#ff5e8a", "#ffd166", "#a78bfa", "#fb923c", "#34d399", "#5ac8ff"];
+  const n = [0, 2, 4, 6, 9, 13][level];
+  const colors = ["#ff5e8a", "#ffd166", "#a78bfa", "#fb923c", "#34d399", "#5ac8ff", "#f472b6"];
+  const accents = ["#ffd166", "#ff5e8a", "#5ac8ff", "#fff58a", "#a78bfa", "#34d399", "#fff"];
   return Array.from({ length: n }).map((_, i) => ({
     left: 10 + ((i * 17) % 75),
     top: 30 + ((i * 13) % 45),
     delay: (i % 5) * 0.6,
     color: colors[i % colors.length],
+    accent: accents[i % accents.length],
   }));
 }
 

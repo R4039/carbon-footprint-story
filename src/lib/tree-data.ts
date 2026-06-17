@@ -27,18 +27,20 @@ export function getStage(xp: number) {
 
 export type CheckInAnswers = {
   transport: "walk" | "transit" | "ev" | "car";
+  food: "plant" | "mostly-plant" | "mixed" | "meat";
   electricity: "low" | "normal" | "high";
-  food: "plant" | "mixed" | "meat";
-  plastic: "none" | "some" | "lots";
   water: "saver" | "normal" | "wasteful";
+  waste: "recycle-all" | "mostly-recycle" | "some-waste" | "high-waste";
+  shopping: "nothing" | "sustainable" | "regular" | "fast-fashion";
 };
 
 const SCORES = {
   transport: { walk: 12, transit: 8, ev: 5, car: -4 },
+  food: { plant: 10, "mostly-plant": 7, mixed: 3, meat: -3 },
   electricity: { low: 8, normal: 3, high: -3 },
-  food: { plant: 10, mixed: 4, meat: -3 },
-  plastic: { none: 8, some: 2, lots: -4 },
   water: { saver: 7, normal: 3, wasteful: -3 },
+  waste: { "recycle-all": 8, "mostly-recycle": 5, "some-waste": 0, "high-waste": -4 },
+  shopping: { nothing: 8, sustainable: 5, regular: 1, "fast-fashion": -5 },
 } as const;
 
 export function scoreCheckIn(a: CheckInAnswers) {
@@ -55,6 +57,7 @@ export function scoreCheckIn(a: CheckInAnswers) {
   }
   if (xp >= 30) butterflies += 1;
   if (xp >= 40) birds += 1;
+  if (xp >= 50) butterflies += 1;
   co2 = Math.max(0, Math.round((xp / 10) * 1.2 * 10) / 10);
 
   return { xp, leaves, butterflies, birds, co2 };
@@ -63,48 +66,60 @@ export function scoreCheckIn(a: CheckInAnswers) {
 export const QUESTIONS = [
   {
     id: "transport" as const,
-    title: "How did you get around today?",
+    title: "How did you get around?",
     options: [
-      { value: "walk", label: "Bicycle or Walk", emoji: "🚶" },
+      { value: "walk", label: "Walked / Cycled", emoji: "🚶" },
       { value: "transit", label: "Public Transit", emoji: "🚌" },
       { value: "ev", label: "Electric Vehicle", emoji: "⚡" },
       { value: "car", label: "Personal Car", emoji: "🚗" },
     ],
   },
   {
-    id: "electricity" as const,
-    title: "Your electricity use today",
+    id: "food" as const,
+    title: "Today's meals",
     options: [
-      { value: "low", label: "Mindful & Low", emoji: "💡" },
-      { value: "normal", label: "Average", emoji: "🔌" },
+      { value: "plant", label: "Plant Based", emoji: "🥗" },
+      { value: "mostly-plant", label: "Mostly Plant Based", emoji: "🥑" },
+      { value: "mixed", label: "Mixed Diet", emoji: "🍱" },
+      { value: "meat", label: "Meat Heavy", emoji: "🥩" },
+    ],
+  },
+  {
+    id: "electricity" as const,
+    title: "Energy usage",
+    options: [
+      { value: "low", label: "Conserved Energy", emoji: "💡" },
+      { value: "normal", label: "Normal Usage", emoji: "🔌" },
       { value: "high", label: "Heavy Usage", emoji: "⚡" },
     ],
   },
   {
-    id: "food" as const,
-    title: "Your meals today",
-    options: [
-      { value: "plant", label: "Plant-Based", emoji: "🥗" },
-      { value: "mixed", label: "Mixed", emoji: "🍱" },
-      { value: "meat", label: "Meat-Heavy", emoji: "🥩" },
-    ],
-  },
-  {
-    id: "plastic" as const,
-    title: "Single-use plastic today",
-    options: [
-      { value: "none", label: "None", emoji: "♻️" },
-      { value: "some", label: "A Few Items", emoji: "🛍️" },
-      { value: "lots", label: "Several Items", emoji: "🥤" },
-    ],
-  },
-  {
     id: "water" as const,
-    title: "Water conservation",
+    title: "Water use",
     options: [
       { value: "saver", label: "Saved Water", emoji: "💧" },
-      { value: "normal", label: "Normal Use", emoji: "🚿" },
-      { value: "wasteful", label: "Long Showers", emoji: "🛁" },
+      { value: "normal", label: "Average Usage", emoji: "🚿" },
+      { value: "wasteful", label: "Long Shower", emoji: "🛁" },
+    ],
+  },
+  {
+    id: "waste" as const,
+    title: "Waste & recycling",
+    options: [
+      { value: "recycle-all", label: "Recycled Everything", emoji: "♻️" },
+      { value: "mostly-recycle", label: "Mostly Recycled", emoji: "🗑️" },
+      { value: "some-waste", label: "Some Waste", emoji: "🛍️" },
+      { value: "high-waste", label: "High Waste", emoji: "🚮" },
+    ],
+  },
+  {
+    id: "shopping" as const,
+    title: "Shopping today",
+    options: [
+      { value: "nothing", label: "Bought Nothing", emoji: "🧘" },
+      { value: "sustainable", label: "Sustainable", emoji: "🌿" },
+      { value: "regular", label: "Regular Purchase", emoji: "🛒" },
+      { value: "fast-fashion", label: "Fast Fashion", emoji: "👕" },
     ],
   },
 ];
