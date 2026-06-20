@@ -26,17 +26,15 @@ const LEVEL_NAMES = ["", "Empty Land", "Seedlings", "Young Forest", "Blooming Fo
 const SEASONS = ["spring", "summer", "autumn", "winter"] as const;
 
 function Dashboard() {
-  const { state, hydrated, submitCheckIn } = useTreeState();
+  const { state, hydrated, submitCheckIn, entriesToday, canCheckIn, dailyLimit } = useTreeState();
   const { history } = useDailyCheckInState();
-  const { theme } = useTheme();
-  const isNight = theme === "night";
   const [answers, setAnswers] = useState<Partial<CheckInAnswers>>({});
   const [mentorMsg, setMentorMsg] = useState<string | null>(null);
   const [growKey, setGrowKey] = useState(0);
   const mentorFn = useServerFn(getMentorInsight);
 
   const mentor = useMutation({
-    mutationFn: (vars: { answers: CheckInAnswers; score: ReturnType<typeof submitCheckIn> }) => {
+    mutationFn: (vars: { answers: CheckInAnswers; score: NonNullable<ReturnType<typeof submitCheckIn>> }) => {
       // Backend expects original 5-field shape; map gracefully.
       const a = vars.answers;
       const mapped = {
@@ -54,9 +52,13 @@ function Dashboard() {
 
   const allAnswered = QUESTIONS.every((q) => answers[q.id as keyof CheckInAnswers]);
 
+  // Tree growth scales with every personal log entry — instantly visible.
+  const entriesCount = state.logs.length + history.entries.length;
+
   const { forestLevel, health, biodiversity, season } = useMemo(() => {
-    const recent = history.entries.slice(0, 7);
-    const avg = recent.length ? recent.reduce((a, e) => a + e.score, 0) / recent.length : 55;
+    const recent = [...state.logs.slice(0, 7), ...history.entries.slice(0, 7)];
+    const scores = recent.map((r) => ("score" in r ? r.score : Math.min(100, 40 + (r.xp ?? 0))));
+    const avg = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : 55;
     const lvl: 1 | 2 | 3 | 4 | 5 =
       avg >= 80 ? 5 : avg >= 65 ? 4 : avg >= 50 ? 3 : avg >= 30 ? 2 : 1;
     const monthIdx = new Date().getMonth();
@@ -67,18 +69,18 @@ function Dashboard() {
       biodiversity: Math.min(100, lvl * 18 + state.butterflies + state.birds * 2),
       season: SEASONS[seasonIdx],
     };
-  }, [history.entries, state.butterflies, state.birds]);
+  }, [state.logs, history.entries, state.butterflies, state.birds]);
 
-  const treesGrown = [0, 2, 5, 9, 13, 15][forestLevel] + history.entries.length;
+  const treesGrown = [0, 2, 5, 9, 13, 15][forestLevel] + entriesCount;
   const wildlife = state.butterflies + state.birds + (forestLevel >= 3 ? 2 : 0) + (forestLevel >= 4 ? 3 : 0);
 
   const achievements = useMemo(() => [
-    { id: "sapling", icon: "🌱", label: "First Sapling", unlocked: history.entries.length >= 1 },
+    { id: "sapling", icon: "🌱", label: "First Sapling", unlocked: entriesCount >= 1 },
     { id: "butterfly", icon: "🦋", label: "Butterfly Magnet", unlocked: state.butterflies >= 5 },
     { id: "builder", icon: "🌳", label: "Forest Builder", unlocked: treesGrown >= 10 },
     { id: "streak", icon: "🔥", label: "7 Day Streak", unlocked: state.streak >= 7 },
     { id: "hero", icon: "🌎", label: "Carbon Hero", unlocked: state.co2 >= 25 },
-  ], [history.entries.length, state.butterflies, treesGrown, state.streak, state.co2]);
+  ], [entriesCount, state.butterflies, treesGrown, state.streak, state.co2]);
 
   useEffect(() => {
     if (!mentorMsg && hydrated) {
@@ -87,9 +89,10 @@ function Dashboard() {
   }, [hydrated, mentorMsg]);
 
   function handleSubmit() {
-    if (!allAnswered) return;
+    if (!allAnswered || !canCheckIn) return;
     const a = answers as CheckInAnswers;
     const score = submitCheckIn(a);
+    if (!score) return;
     mentor.mutate({ answers: a, score });
     setAnswers({});
     setGrowKey((k) => k + 1);
@@ -101,19 +104,19 @@ function Dashboard() {
         {/* LEFT — Forest hero */}
         <div className="flex flex-col gap-6 lg:col-span-8">
           <section
-            className="relative overflow-hidden rounded-3xl border border-white/60 bg-gradient-to-b from-sky/60 to-cream p-4 shadow-eco transition-colors duration-500 dark:border-white/5 md:p-6"
+            className="relative overflow-hidden rounded-3xl border border-white/60 bg-gradient-to-b from-sky/60 to-cream p-4 shadow-eco md:p-6"
           >
             <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
               <div className="min-w-0">
                 <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-forest/60">My Carbon Forest</p>
                 <h1 className="mt-1 font-serif text-3xl text-forest md:text-4xl">{LEVEL_NAMES[forestLevel]}</h1>
-                <p className="mt-1 text-sm capitalize text-stone-500 dark:text-stone-400">
+                <p className="mt-1 text-sm capitalize text-stone-500">
                   Level {forestLevel} of 5 · {state.streak}-day streak · {season}
                 </p>
               </div>
               <div className="glass inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold text-forest">
                 <Flame className="size-4 text-bloom" />
-                {history.entries.length} check-ins
+                {entriesToday}/{dailyLimit} entries today
               </div>
             </div>
 
@@ -121,13 +124,13 @@ function Dashboard() {
               <ForestIsland
                 level={forestLevel}
                 health={health}
-                isNight={isNight}
                 season={season}
-                entriesCount={history.entries.length}
+                entriesCount={entriesCount}
               />
             </div>
 
             <div className="mt-5">
+
               <div className="mb-2 flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400">
                 <span>Empty Land</span>
                 <span>Forest Paradise</span>
