@@ -244,23 +244,30 @@ export function ForestIsland({
           </g>
         ))}
 
-        {/* Trees - back to front */}
+        {/* Trees - back to front. Last planted gets a celebratory burst. */}
         {trees
           .slice()
           .sort((a, b) => a.y - b.y)
-          .map((t, i) => (
-            <g
-              key={`t${i}`}
-              transform={`translate(${t.x},${t.y}) scale(${t.scale})`}
-              style={{
-                transformOrigin: `${t.x}px ${t.y}px`,
-                animation: `sway ${5 + (i % 4)}s ease-in-out infinite, fade-in-up 0.7s ease-out both`,
-                animationDelay: `${(i % 6) * 0.3}s, ${i * 0.06}s`,
-              }}
-            >
-              <Tree variant={t.variant} palette={t.palette} isNight={isNight} season={season} />
-            </g>
-          ))}
+          .map((t, i) => {
+            const isNewest = t.idx === trees.length - 1 && trees.length > 0;
+            return (
+              <g
+                key={`t${t.idx}`}
+                transform={`translate(${t.x},${t.y}) scale(${t.scale})`}
+                style={{
+                  transformOrigin: `${t.x}px ${t.y}px`,
+                  animation: isNewest
+                    ? `sway ${5 + (i % 4)}s ease-in-out infinite, tree-burst 1.1s cubic-bezier(.34,1.56,.64,1) both`
+                    : `sway ${5 + (i % 4)}s ease-in-out infinite, fade-in-up 0.7s ease-out both`,
+                  animationDelay: `${(i % 6) * 0.3}s, ${i * 0.04}s`,
+                  filter: isNewest ? "drop-shadow(0 0 14px rgba(255,240,170,0.85))" : undefined,
+                }}
+              >
+                <Tree variant={t.variant} palette={t.palette} isNight={isNight} season={season} />
+              </g>
+            );
+          })}
+
       </svg>
 
       {/* Butterflies */}
