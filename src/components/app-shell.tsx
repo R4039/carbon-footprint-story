@@ -48,13 +48,7 @@ export function AppShell({ children, level }: { children: ReactNode; level?: str
                 {level}
               </div>
             )}
-            <button
-              onClick={toggle}
-              aria-label={isNight ? "Switch to day" : "Switch to night"}
-              className="grid size-9 place-items-center rounded-full border border-stone-200 bg-white/70 text-forest transition-transform hover:scale-105 dark:border-white/10 dark:bg-white/5"
-            >
-              {isNight ? <Sun className="size-4" /> : <Moon className="size-4" />}
-            </button>
+
             <div className="grid size-9 place-items-center rounded-full bg-bloom-soft text-sm font-bold text-forest">
               E
             </div>
