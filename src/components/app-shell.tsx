@@ -1,7 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Trees, Target, Users, BookOpen, ClipboardCheck, Sun, Moon } from "lucide-react";
+import { Trees, Target, Users, BookOpen, ClipboardCheck } from "lucide-react";
 import type { ReactNode } from "react";
-import { useTheme } from "@/lib/theme";
 
 const NAV = [
   { to: "/", label: "My Forest", icon: Trees },
@@ -13,8 +12,7 @@ const NAV = [
 
 export function AppShell({ children, level }: { children: ReactNode; level?: string }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { theme, toggle } = useTheme();
-  const isNight = theme === "night";
+
 
   return (
     <div className="min-h-screen bg-cream text-stone-900 transition-colors duration-500 dark:text-sage-soft">
