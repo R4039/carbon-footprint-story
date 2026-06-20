@@ -357,7 +357,14 @@ export function ForestIsland({
           10% { opacity: 0.95; }
           100% { transform: translate(110vw, 40px) rotate(360deg); opacity: 0; }
         }
+        @keyframes tree-burst {
+          0% { transform: translateY(14px) scale(0); opacity: 0; }
+          55% { transform: translateY(-4px) scale(1.18); opacity: 1; }
+          75% { transform: translateY(0) scale(0.96); }
+          100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
       `}</style>
+
     </div>
   );
 }
