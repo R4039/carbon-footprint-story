@@ -10,7 +10,9 @@ export type ForestProps = {
 };
 
 /**
- * Vibrant isometric forest island. Grows with every check-in entry.
+ * Vibrant isometric forest island.
+ * Trees are green with pearl-like flowers.
+ * Content is clipped to the island so nothing grows outside the land.
  */
 export function ForestIsland({
   level,
@@ -47,6 +49,7 @@ export function ForestIsland({
             : "linear-gradient(180deg,#9be0ff 0%, #ffcfb0 35%, #ff9eb8 60%, #ffd47a 85%, #ffe9b8 100%)",
         }}
       />
+
       {/* Soft sun glow band */}
       <div
         className="pointer-events-none absolute inset-x-0 top-[28%] h-[40%]"
@@ -67,7 +70,6 @@ export function ForestIsland({
         aria-hidden
       />
 
-
       {/* Distant clouds */}
       {!isNight && (
         <>
@@ -76,6 +78,7 @@ export function ForestIsland({
           <Cloud className="left-[28%] top-[24%] scale-50 opacity-70" style={{ animation: "drift 35s ease-in-out infinite" }} />
         </>
       )}
+
       {isNight && (
         <div className="absolute inset-0">
           {Array.from({ length: 32 }).map((_, i) => (
@@ -108,7 +111,13 @@ export function ForestIsland({
             color: isNight ? "#2a1f4a" : "#2a2a2a",
           }}
         >
-          <path d="M2 8 Q6 2 12 7 Q18 2 22 8" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+          <path
+            d="M2 8 Q6 2 12 7 Q18 2 22 8"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            fill="none"
+            strokeLinecap="round"
+          />
         </svg>
       ))}
 
@@ -119,30 +128,45 @@ export function ForestIsland({
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
+          <clipPath id="islandClip">
+            <path d="M400 130 L720 310 L400 490 L80 310 Z" />
+          </clipPath>
+
           <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={grassHi} />
             <stop offset="50%" stopColor={grassA} />
             <stop offset="100%" stopColor={grassB} />
           </linearGradient>
+
           <linearGradient id="river" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={riverA} />
             <stop offset="100%" stopColor={riverB} />
           </linearGradient>
+
           <radialGradient id="islandShade" cx="50%" cy="60%" r="60%">
             <stop offset="55%" stopColor="rgba(255,255,200,0.18)" />
             <stop offset="100%" stopColor="rgba(20,40,20,0.28)" />
           </radialGradient>
-          {/* Vibrant checkered grass pattern (Stardew-style floor) */}
-          <pattern id="grassTile" x="0" y="0" width="48" height="24" patternUnits="userSpaceOnUse" patternTransform="rotate(0)">
+
+          <pattern id="grassTile" x="0" y="0" width="48" height="24" patternUnits="userSpaceOnUse">
             <rect width="48" height="24" fill="url(#grass)" />
             <path d="M0 12 L24 0 L48 12 L24 24 Z" fill={grassHi} opacity="0.35" />
             <circle cx="12" cy="12" r="0.9" fill={grassHi} opacity="0.7" />
             <circle cx="36" cy="12" r="0.9" fill={grassHi} opacity="0.7" />
           </pattern>
+
           <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation="2.5" result="b" />
             <feMerge>
               <feMergeNode in="b" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <filter id="pearlGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="1.2" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
@@ -151,130 +175,125 @@ export function ForestIsland({
         {/* Soft shadow */}
         <ellipse cx="400" cy="500" rx="340" ry="42" fill="rgba(0,0,0,0.22)" />
 
-        {/* Island */}
+        {/* Island base */}
         <g>
           <path d="M400 130 L720 310 L400 490 L80 310 Z" fill="url(#grassTile)" />
-          {/* depth */}
           <path d="M400 490 L720 310 L720 340 L400 520 Z" fill={earthShade} />
           <path d="M400 490 L80 310 L80 340 L400 520 Z" fill={earth} />
-          {/* warm rim light */}
           <path
             d="M400 130 L720 310 L400 490 L80 310 Z"
             fill="none"
             stroke={isNight ? "rgba(180,220,255,0.45)" : "rgba(255,240,180,0.55)"}
             strokeWidth="2"
           />
-          {/* shading */}
           <path d="M400 130 L720 310 L400 490 L80 310 Z" fill="url(#islandShade)" />
         </g>
 
-        {/* Stone path winding through the field */}
-        {level >= 2 && (
-          <g opacity="0.85">
-            {Array.from({ length: 7 }).map((_, i) => {
-              const t = i / 6;
-              const cx = 200 + t * 380 + Math.sin(t * 4) * 16;
-              const cy = 410 - t * 90;
-              return <ellipse key={i} cx={cx} cy={cy} rx="11" ry="5" fill={isNight ? "#5a6b88" : "#e9d9b4"} />;
-            })}
-          </g>
-        )}
+        {/* Everything inside the island gets clipped here */}
+        <g clipPath="url(#islandClip)">
+          {/* Stone path */}
+          {level >= 2 && (
+            <g opacity="0.85">
+              {Array.from({ length: 7 }).map((_, i) => {
+                const t = i / 6;
+                const cx = 225 + t * 350 + Math.sin(t * 4) * 10;
+                const cy = 405 - t * 85;
+                return <ellipse key={i} cx={cx} cy={cy} rx="11" ry="5" fill={isNight ? "#5a6b88" : "#e9d9b4"} />;
+              })}
+            </g>
+          )}
 
-        {/* River */}
-        {level >= 2 && (
-          <g opacity={dry ? 0.75 : 1}>
-            <path
-              d="M180 360 Q300 320 400 360 T620 360 L600 380 Q500 360 400 380 T200 380 Z"
-              fill="url(#river)"
-            />
-            <path
-              d="M220 358 Q320 340 400 358 T580 358"
-              stroke="rgba(255,255,255,0.7)"
-              strokeWidth="1.6"
-              fill="none"
-            />
-            <path
-              d="M240 372 Q330 358 410 372 T560 372"
-              stroke="rgba(255,255,255,0.4)"
-              strokeWidth="1"
-              fill="none"
-            />
-          </g>
-        )}
+          {/* River */}
+          {level >= 2 && (
+            <g opacity={dry ? 0.75 : 1}>
+              <path
+                d="M180 360 Q300 320 400 360 T620 360 L600 380 Q500 360 400 380 T200 380 Z"
+                fill="url(#river)"
+              />
+              <path
+                d="M220 358 Q320 340 400 358 T580 358"
+                stroke="rgba(255,255,255,0.7)"
+                strokeWidth="1.6"
+                fill="none"
+              />
+              <path
+                d="M240 372 Q330 358 410 372 T560 372"
+                stroke="rgba(255,255,255,0.4)"
+                strokeWidth="1"
+                fill="none"
+              />
+            </g>
+          )}
 
-        {/* Debris (only dry/empty) */}
-        {debris.map((d, i) => (
-          <g key={`d${i}`} transform={`translate(${d.x},${d.y}) rotate(${d.r})`}>
-            <rect width="22" height="4" rx="2" fill="#7a5230" />
-            <rect x="5" y="-3" width="10" height="4" rx="2" fill="#5a3d22" />
-          </g>
-        ))}
+          {/* Debris */}
+          {debris.map((d, i) => (
+            <g key={`d${i}`} transform={`translate(${d.x},${d.y}) rotate(${d.r})`}>
+              <rect width="22" height="4" rx="2" fill="#7a5230" />
+              <rect x="5" y="-3" width="10" height="4" rx="2" fill="#5a3d22" />
+            </g>
+          ))}
 
-        {/* Mushrooms — appear with check-ins */}
-        {mushrooms.map((m, i) => (
-          <g key={`m${i}`} transform={`translate(${m.x},${m.y})`}>
-            <rect x="-1.5" y="-2" width="3" height="5" rx="1" fill="#fff5e0" />
-            <ellipse cx="0" cy="-3" rx="5" ry="3.5" fill={m.color} />
-            <circle cx="-2" cy="-3.5" r="0.8" fill="#fff" />
-            <circle cx="1.5" cy="-2.5" r="0.6" fill="#fff" />
-          </g>
-        ))}
+          {/* Mushrooms */}
+          {mushrooms.map((m, i) => (
+            <g key={`m${i}`} transform={`translate(${m.x},${m.y})`}>
+              <rect x="-1.5" y="-2" width="3" height="5" rx="1" fill="#fff5e0" />
+              <ellipse cx="0" cy="-3" rx="5" ry="3.5" fill={m.color} />
+              <circle cx="-2" cy="-3.5" r="0.8" fill="#fff" />
+              <circle cx="1.5" cy="-2.5" r="0.6" fill="#fff" />
+            </g>
+          ))}
 
-        {/* Flowers / grass tufts */}
-        {flowers.map((f, i) => (
-          <g key={`f${i}`} transform={`translate(${f.x},${f.y})`}>
-            {f.type === "flower" ? (
-              <g filter="url(#glow)">
-                <circle r="2.4" cx="-2.6" cy="0" fill={f.color} />
-                <circle r="2.4" cx="2.6" cy="0" fill={f.color} />
-                <circle r="2.4" cx="0" cy="-2.6" fill={f.color} />
-                <circle r="2.4" cx="0" cy="2.6" fill={f.color} />
-                <circle r="1.6" fill="#fff7c2" />
-              </g>
-            ) : (
-              <path d={`M-3 0 Q0 -7 3 0`} stroke={dry ? "#b89a4d" : "#5fc97a"} strokeWidth="1.6" fill="none" />
-            )}
-          </g>
-        ))}
+          {/* Flowers */}
+          {flowers.map((f, i) => (
+            <g key={`f${i}`} transform={`translate(${f.x},${f.y})`}>
+              {f.type === "flower" ? (
+                <g filter="url(#glow)">
+                  <circle r="2.4" cx="-2.6" cy="0" fill={f.color} />
+                  <circle r="2.4" cx="2.6" cy="0" fill={f.color} />
+                  <circle r="2.4" cx="0" cy="-2.6" fill={f.color} />
+                  <circle r="2.4" cx="0" cy="2.6" fill={f.color} />
+                  <circle r="1.6" fill="#fff7c2" />
+                </g>
+              ) : (
+                <path d="M-3 0 Q0 -7 3 0" stroke={dry ? "#b89a4d" : "#5fc97a"} strokeWidth="1.6" fill="none" />
+              )}
+            </g>
+          ))}
 
-        {/* Animals */}
-        {animals.map((a, i) => (
-          <g key={`a${i}`} transform={`translate(${a.x},${a.y}) scale(${a.scale})`}>
-            {a.kind === "rabbit" ? <Rabbit /> : <Deer />}
-          </g>
-        ))}
+          {/* Animals */}
+          {animals.map((a, i) => (
+            <g key={`a${i}`} transform={`translate(${a.x},${a.y}) scale(${a.scale})`}>
+              {a.kind === "rabbit" ? <Rabbit /> : <Deer />}
+            </g>
+          ))}
 
-        {/* Trees - back to front. Last planted gets a celebratory burst. */}
-        {trees
-          .slice()
-          .sort((a, b) => a.y - b.y)
-          .map((t, i) => {
-            const isNewest = t.idx === trees.length - 1 && trees.length > 0;
-            return (
-              // Outer <g> = positioning only (SVG transform attribute).
-              <g key={`t${t.idx}`} transform={`translate(${t.x},${t.y})`}>
-                {/* Middle <g> = CSS-driven entrance + sway. */}
-                <g
-                  style={{
-                    transformOrigin: "center",
-                    transformBox: "fill-box",
-                    animation: isNewest
-                      ? "tree-pop 1.1s cubic-bezier(.34,1.56,.64,1) both"
-                      : "tree-grow 0.8s ease-out both",
-                    animationDelay: `${i * 0.05}s`,
-                    filter: isNewest ? "drop-shadow(0 0 18px rgba(255,240,170,0.9))" : undefined,
-                  }}
-                >
-                  {/* Inner <g> = constant scale (SVG attr, never clobbered). */}
-                  <g transform={`scale(${t.scale})`}>
-                    <Tree variant={t.variant} palette={t.palette} isNight={isNight} season={season} />
+          {/* Trees */}
+          {trees
+            .slice()
+            .sort((a, b) => a.y - b.y)
+            .map((t, i) => {
+              const isNewest = t.idx === trees.length - 1 && trees.length > 0;
+              return (
+                <g key={`t${t.idx}`} transform={`translate(${t.x},${t.y})`}>
+                  <g
+                    style={{
+                      transformOrigin: "center",
+                      transformBox: "fill-box",
+                      animation: isNewest
+                        ? "tree-pop 1.1s cubic-bezier(.34,1.56,.64,1) both"
+                        : "tree-grow 0.8s ease-out both",
+                      animationDelay: `${i * 0.05}s`,
+                      filter: isNewest ? "drop-shadow(0 0 18px rgba(255,240,170,0.9))" : undefined,
+                    }}
+                  >
+                    <g transform={`scale(${t.scale})`}>
+                      <Tree variant={t.variant} palette={t.palette} isNight={isNight} season={season} />
+                    </g>
                   </g>
                 </g>
-              </g>
-            );
-          })}
-
-
+              );
+            })}
+        </g>
       </svg>
 
       {/* Butterflies */}
@@ -287,7 +306,9 @@ export function ForestIsland({
             top: `${b.top}%`,
             animation: `drift ${7 + (i % 5)}s ease-in-out infinite`,
             animationDelay: `${b.delay}s`,
-            filter: isNight ? "brightness(0.75) drop-shadow(0 0 6px rgba(255,200,255,0.6))" : "drop-shadow(0 2px 4px rgba(0,0,0,0.15))",
+            filter: isNight
+              ? "brightness(0.75) drop-shadow(0 0 6px rgba(255,200,255,0.6))"
+              : "drop-shadow(0 2px 4px rgba(0,0,0,0.15))",
           }}
           aria-hidden
         >
@@ -375,9 +396,23 @@ export function ForestIsland({
           80% { transform: scale(0.94); }
           100% { transform: scale(1); opacity: 1; }
         }
+        @keyframes wing-flap {
+          0%, 100% { transform: rotate(0deg); }
+          50% { transform: rotate(8deg); }
+        }
+        @keyframes firefly {
+          0%, 100% { opacity: 0.3; transform: translate(0, 0); }
+          50% { opacity: 1; transform: translate(8px, -12px); }
+        }
+        @keyframes drift {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(100px); }
+        }
+        @keyframes pulse-soft {
+          0%, 100% { opacity: 0.4; }
+          50% { opacity: 1; }
+        }
       `}</style>
-
-
     </div>
   );
 }
@@ -392,7 +427,7 @@ function seasonColor(season: string, slot: "grassA" | "grassB" | "grassHi") {
       return slot === "grassA" ? "#eaf6fb" : slot === "grassB" ? "#a8c8d4" : "#ffffff";
     case "summer":
       return slot === "grassA" ? "#7be38a" : slot === "grassB" ? "#2fa84c" : "#a9f0b4";
-    default: // spring — vibrant
+    default:
       return slot === "grassA" ? "#86e89b" : slot === "grassB" ? "#3fb867" : "#b5f5c3";
   }
 }
@@ -401,7 +436,7 @@ function Cloud({ className = "", style }: { className?: string; style?: React.CS
   return (
     <div className={`absolute ${className}`} style={style}>
       <svg viewBox="0 0 100 40" className="h-10 w-28">
-        <g fill="white" opacity="0.95">
+        <g fill="white" opacity={0.95}>
           <ellipse cx="25" cy="25" rx="20" ry="12" />
           <ellipse cx="50" cy="20" rx="22" ry="14" />
           <ellipse cx="75" cy="26" rx="18" ry="11" />
@@ -414,23 +449,25 @@ function Cloud({ className = "", style }: { className?: string; style?: React.CS
 function Butterfly({ color, accent }: { color: string; accent: string }) {
   return (
     <svg viewBox="0 0 32 24" className="size-7 overflow-visible">
-      {/* Left wing pair */}
       <g style={{ transformOrigin: "16px 12px", animation: "wing-flap 0.32s ease-in-out infinite" }}>
         <path d="M16 12 C 6 2, 0 4, 2 12 C 0 18, 8 22, 16 14 Z" fill={color} />
         <path d="M16 12 C 8 8, 4 8, 4 12 C 4 16, 10 18, 16 13 Z" fill={accent} opacity="0.85" />
         <circle cx="6" cy="10" r="1.6" fill="#fff" opacity="0.9" />
         <circle cx="6" cy="10" r="0.7" fill="#1a1a2e" />
-        <circle cx="10" cy="15" r="1" fill="#fff" opacity="0.7" />
       </g>
-      {/* Right wing pair (mirrored) */}
-      <g style={{ transformOrigin: "16px 12px", animation: "wing-flap 0.32s ease-in-out infinite", transform: "scaleX(-1)", transformBox: "fill-box" }}>
+      <g
+        style={{
+          transformOrigin: "16px 12px",
+          animation: "wing-flap 0.32s ease-in-out infinite",
+          transform: "scaleX(-1)",
+          transformBox: "fill-box",
+        }}
+      >
         <path d="M16 12 C 6 2, 0 4, 2 12 C 0 18, 8 22, 16 14 Z" fill={color} />
         <path d="M16 12 C 8 8, 4 8, 4 12 C 4 16, 10 18, 16 13 Z" fill={accent} opacity="0.85" />
         <circle cx="6" cy="10" r="1.6" fill="#fff" opacity="0.9" />
         <circle cx="6" cy="10" r="0.7" fill="#1a1a2e" />
-        <circle cx="10" cy="15" r="1" fill="#fff" opacity="0.7" />
       </g>
-      {/* Body + antennae */}
       <ellipse cx="16" cy="12" rx="0.9" ry="6" fill="#2a1a0a" />
       <circle cx="16" cy="6.5" r="1" fill="#2a1a0a" />
       <path d="M16 6 Q 14 3 12 2" stroke="#2a1a0a" strokeWidth="0.5" fill="none" strokeLinecap="round" />
@@ -461,7 +498,6 @@ function Deer() {
       <rect x="6" y="5" width="2" height="6" fill="#7a4a23" />
       <circle cx="-14" cy="-4" r="0.8" fill="#222" />
       <circle cx="2" cy="-2" r="1.2" fill="#fff5e0" />
-      <circle cx="-3" cy="3" r="1.2" fill="#fff5e0" />
     </g>
   );
 }
@@ -470,16 +506,16 @@ type TreePalette = {
   trunk: string;
   leaf: string;
   leafHi: string;
-  accent?: string;
+  pearl?: string;
 };
 
 const VIBRANT_PALETTES: TreePalette[] = [
-  { trunk: "#7a4a23", leaf: "#34d17a", leafHi: "#7ff0a8", accent: "#fff58a" }, // lime
-  { trunk: "#7a4a23", leaf: "#ff7ab0", leafHi: "#ffc0d9", accent: "#fff" },     // cherry blossom
-  { trunk: "#7a4a23", leaf: "#ffb347", leafHi: "#ffe08a", accent: "#ff7a3d" },  // golden
-  { trunk: "#5a3a1c", leaf: "#5ac8ff", leafHi: "#b3eaff", accent: "#fff" },     // dream blue
-  { trunk: "#7a4a23", leaf: "#c084fc", leafHi: "#e5c6ff", accent: "#fff58a" },  // violet
-  { trunk: "#7a4a23", leaf: "#22c073", leafHi: "#7ce39a", accent: "#fff58a" },  // emerald
+  { trunk: "#7a4a23", leaf: "#34d17a", leafHi: "#7ff0a8", pearl: "#fff5e0" },
+  { trunk: "#7a4a23", leaf: "#2d9a5c", leafHi: "#5fd88a", pearl: "#ffffff" },
+  { trunk: "#7a4a23", leaf: "#4caf50", leafHi: "#8ce082", pearl: "#fffacd" },
+  { trunk: "#5a3a1c", leaf: "#22c073", leafHi: "#7ce39a", pearl: "#fff58a" },
+  { trunk: "#7a4a23", leaf: "#1db954", leafHi: "#6de89a", pearl: "#ffffff" },
+  { trunk: "#7a4a23", leaf: "#3cb371", leafHi: "#7fdfb4", pearl: "#f0fff0" },
 ];
 
 function Tree({
@@ -497,7 +533,7 @@ function Tree({
   const trunk = dim(palette.trunk);
   const leaf = dim(palette.leaf);
   const leafHi = dim(palette.leafHi);
-  const accent = palette.accent ? dim(palette.accent) : leafHi;
+  const pearl = palette.pearl ? dim(palette.pearl) : "#ffffff";
 
   if (variant === "sapling") {
     return (
@@ -505,9 +541,12 @@ function Tree({
         <rect x="-1" y="-7" width="2" height="7" fill={trunk} rx="1" />
         <circle cx="0" cy="-11" r="7" fill={leaf} />
         <circle cx="-2" cy="-13" r="3" fill={leafHi} opacity="0.9" />
+        <circle cx="1" cy="-10" r="1.2" fill={pearl} filter="url(#pearlGlow)" />
+        <circle cx="-3" cy="-12" r="1" fill={pearl} filter="url(#pearlGlow)" />
       </g>
     );
   }
+
   if (variant === "stump") {
     return (
       <g>
@@ -517,6 +556,7 @@ function Tree({
       </g>
     );
   }
+
   if (variant === "pine") {
     return (
       <g>
@@ -524,12 +564,16 @@ function Tree({
         <polygon points="0,-48 -16,-14 16,-14" fill={leaf} />
         <polygon points="0,-38 -20,-4 20,-4" fill={leaf} opacity="0.95" />
         <polygon points="0,-46 -10,-22 10,-22" fill={leafHi} opacity="0.6" />
+        <circle cx="-4" cy="-28" r="1.4" fill={pearl} filter="url(#pearlGlow)" />
+        <circle cx="5" cy="-32" r="1.2" fill={pearl} filter="url(#pearlGlow)" />
+        <circle cx="0" cy="-20" r="1.3" fill={pearl} filter="url(#pearlGlow)" />
       </g>
     );
   }
+
   if (variant === "blossom") {
-    const blossom = season === "autumn" && !isNight ? "#ff7a3d" : leaf;
-    const blossomHi = season === "autumn" && !isNight ? "#ffd07a" : leafHi;
+    const blossom = leaf;
+    const blossomHi = leafHi;
     return (
       <g>
         <rect x="-3" y="-10" width="6" height="14" fill={trunk} rx="1" />
@@ -539,13 +583,16 @@ function Tree({
         <circle cx="0" cy="-40" r="11" fill={blossom} opacity="0.95" />
         <circle cx="-6" cy="-32" r="6" fill={blossomHi} opacity="0.85" />
         <circle cx="9" cy="-30" r="5" fill={blossomHi} opacity="0.85" />
-        <circle cx="0" cy="-24" r="1.6" fill={accent} />
-        <circle cx="-10" cy="-18" r="1.4" fill={accent} />
-        <circle cx="10" cy="-22" r="1.4" fill={accent} />
+        <circle cx="0" cy="-24" r="2" fill={pearl} filter="url(#pearlGlow)" />
+        <circle cx="-10" cy="-18" r="1.8" fill={pearl} filter="url(#pearlGlow)" />
+        <circle cx="10" cy="-22" r="1.8" fill={pearl} filter="url(#pearlGlow)" />
+        <circle cx="-5" cy="-35" r="1.5" fill={pearl} filter="url(#pearlGlow)" />
+        <circle cx="7" cy="-36" r="1.6" fill={pearl} filter="url(#pearlGlow)" />
+        <circle cx="-2" cy="-15" r="1.4" fill={pearl} filter="url(#pearlGlow)" />
       </g>
     );
   }
-  // oak
+
   return (
     <g>
       <rect x="-3" y="-10" width="6" height="14" fill={trunk} rx="1" />
@@ -554,8 +601,10 @@ function Tree({
       <circle cx="13" cy="-20" r="12" fill={leaf} opacity="0.95" />
       <circle cx="-4" cy="-30" r="7" fill={leafHi} opacity="0.85" />
       <circle cx="8" cy="-26" r="5" fill={leafHi} opacity="0.8" />
-      <circle cx="0" cy="-22" r="1.6" fill={accent} />
-      <circle cx="-9" cy="-18" r="1.4" fill={accent} />
+      <circle cx="0" cy="-22" r="2" fill={pearl} filter="url(#pearlGlow)" />
+      <circle cx="-9" cy="-18" r="1.8" fill={pearl} filter="url(#pearlGlow)" />
+      <circle cx="8" cy="-20" r="1.7" fill={pearl} filter="url(#pearlGlow)" />
+      <circle cx="-6" cy="-28" r="1.5" fill={pearl} filter="url(#pearlGlow)" />
     </g>
   );
 }
@@ -569,25 +618,22 @@ function shade(hex: string, amt: number) {
   return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
 }
 
-/* ---------- builders ---------- */
-
 type TreeVariant = "pine" | "oak" | "blossom" | "sapling" | "stump";
 
 const TREE_SLOTS: Array<{ x: number; y: number }> = [
-  { x: 250, y: 320 }, { x: 330, y: 290 }, { x: 420, y: 300 },
-  { x: 520, y: 320 }, { x: 580, y: 360 }, { x: 220, y: 380 },
-  { x: 300, y: 410 }, { x: 470, y: 420 }, { x: 560, y: 410 },
-  { x: 380, y: 250 }, { x: 470, y: 260 }, { x: 200, y: 340 },
-  { x: 620, y: 340 }, { x: 350, y: 440 }, { x: 500, y: 450 },
-  { x: 270, y: 260 }, { x: 540, y: 280 }, { x: 410, y: 460 },
-  { x: 180, y: 400 }, { x: 640, y: 400 }, { x: 320, y: 340 },
-  { x: 490, y: 350 }, { x: 380, y: 390 }, { x: 600, y: 300 },
-  { x: 240, y: 440 }, { x: 600, y: 440 }, { x: 360, y: 220 },
-  { x: 500, y: 230 },
+  { x: 255, y: 325 }, { x: 335, y: 295 }, { x: 420, y: 305 },
+  { x: 515, y: 325 }, { x: 570, y: 360 }, { x: 235, y: 380 },
+  { x: 310, y: 410 }, { x: 460, y: 415 }, { x: 545, y: 405 },
+  { x: 385, y: 255 }, { x: 470, y: 265 }, { x: 225, y: 345 },
+  { x: 600, y: 340 }, { x: 355, y: 440 }, { x: 485, y: 445 },
+  { x: 285, y: 270 }, { x: 520, y: 285 }, { x: 410, y: 455 },
+  { x: 210, y: 395 }, { x: 615, y: 395 }, { x: 330, y: 345 },
+  { x: 485, y: 355 }, { x: 385, y: 390 }, { x: 585, y: 305 },
+  { x: 265, y: 435 }, { x: 575, y: 435 }, { x: 365, y: 230 },
+  { x: 495, y: 240 },
 ];
 
 function buildTrees(level: number, entriesCount: number) {
-  // Base trees by ecosystem level + one extra per check-in entry.
   const base = [0, 2, 5, 9, 13, 15][level];
   const total = Math.min(TREE_SLOTS.length, base + entriesCount);
   return TREE_SLOTS.slice(0, total).map((s, i) => {
@@ -599,7 +645,7 @@ function buildTrees(level: number, entriesCount: number) {
       else if (level === 4) variant = i % 3 === 0 ? "blossom" : i % 2 === 0 ? "oak" : "pine";
       else variant = i % 2 === 0 ? "blossom" : i % 3 === 0 ? "pine" : "oak";
     } else {
-      const order: TreeVariant[] = ["sapling", "blossom", "oak", "pine", "blossom", "oak"];
+      const order: TreeVariant[] = ["sapling", "oak", "pine", "blossom", "oak", "pine"];
       variant = order[(i - base) % order.length];
     }
     return {
@@ -607,11 +653,10 @@ function buildTrees(level: number, entriesCount: number) {
       idx: i,
       variant,
       palette: VIBRANT_PALETTES[i % VIBRANT_PALETTES.length],
-      scale: 0.7 + (level / 5) * 0.5 + (i % 3) * 0.06,
+      scale: 0.68 + (level / 5) * 0.48 + (i % 3) * 0.05,
     };
   });
 }
-
 
 function buildFlowers(level: number, entriesCount: number) {
   const colors = ["#ff5e8a", "#ffd166", "#c084fc", "#ff9f6b", "#5ac8ff", "#ff8ad2"];
@@ -633,7 +678,7 @@ function buildAnimals(level: number) {
   if (level >= 5) kinds.push("deer", "rabbit");
   return kinds.map((kind, i) => ({
     kind,
-    x: 230 + i * 110,
+    x: 235 + i * 105,
     y: 410 + (i % 2) * 15,
     scale: kind === "deer" ? 0.85 : 0.7,
   }));
