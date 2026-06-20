@@ -9,7 +9,7 @@ import { useTreeState } from "@/lib/use-tree-state";
 import { useDailyCheckInState } from "@/lib/use-check-in-state";
 import { QUESTIONS, MISSIONS, type CheckInAnswers } from "@/lib/tree-data";
 import { getMentorInsight } from "@/lib/ai.functions";
-import { useTheme } from "@/lib/theme";
+
 import storyCover from "@/assets/story-cover.jpg";
 
 export const Route = createFileRoute("/")({
