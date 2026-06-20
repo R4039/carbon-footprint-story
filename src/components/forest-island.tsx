@@ -579,18 +579,19 @@ function buildTrees(level: number, entriesCount: number) {
       else if (level === 4) variant = i % 3 === 0 ? "blossom" : i % 2 === 0 ? "oak" : "pine";
       else variant = i % 2 === 0 ? "blossom" : i % 3 === 0 ? "pine" : "oak";
     } else {
-      // newly planted by check-ins — cycle through vibrant variants
       const order: TreeVariant[] = ["sapling", "blossom", "oak", "pine", "blossom", "oak"];
       variant = order[(i - base) % order.length];
     }
     return {
       ...s,
+      idx: i,
       variant,
       palette: VIBRANT_PALETTES[i % VIBRANT_PALETTES.length],
       scale: 0.7 + (level / 5) * 0.5 + (i % 3) * 0.06,
     };
   });
 }
+
 
 function buildFlowers(level: number, entriesCount: number) {
   const colors = ["#ff5e8a", "#ffd166", "#c084fc", "#ff9f6b", "#5ac8ff", "#ff8ad2"];
