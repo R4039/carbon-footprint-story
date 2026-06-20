@@ -278,11 +278,16 @@ function Dashboard() {
               ))}
               <button
                 onClick={handleSubmit}
-                disabled={!allAnswered || mentor.isPending}
+                disabled={!allAnswered || mentor.isPending || !canCheckIn}
                 className="mt-2 w-full rounded-2xl bg-gradient-to-r from-forest to-forest-deep py-3.5 text-sm font-bold text-white transition-all hover:scale-[1.01] hover:shadow-lg hover:shadow-forest/30 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
               >
-                {mentor.isPending ? "Growing your forest…" : "Complete Daily Log 🌱"}
+                {!canCheckIn
+                  ? "Daily limit reached · come back tomorrow"
+                  : mentor.isPending
+                    ? "Growing your forest…"
+                    : `Complete Entry 🌱 (${entriesToday}/${dailyLimit})`}
               </button>
+
             </div>
           </section>
 
