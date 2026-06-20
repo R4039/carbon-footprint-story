@@ -25,6 +25,7 @@ export type TreeState = {
 };
 
 const KEY = "carbon-tree-state-v1";
+const DAILY_LIMIT = 2;
 
 const initial: TreeState = {
   xp: 240,
@@ -64,18 +65,26 @@ export function useTreeState() {
     }
   }, [state, hydrated]);
 
+  const today = new Date().toISOString().slice(0, 10);
+  const entriesToday = state.logs.filter((l) => l.date === today).length;
+  const canCheckIn = entriesToday < DAILY_LIMIT;
+
   const submitCheckIn = useCallback((answers: CheckInAnswers) => {
     const score = scoreCheckIn(answers);
-    const today = new Date().toISOString().slice(0, 10);
+    const todayStr = new Date().toISOString().slice(0, 10);
+    let didSubmit = false;
     setState((prev) => {
-      const sameDay = prev.lastCheckIn === today;
+      const todayCount = prev.logs.filter((l) => l.date === todayStr).length;
+      if (todayCount >= DAILY_LIMIT) return prev;
+      didSubmit = true;
       const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-      const newStreak = sameDay
-        ? prev.streak
-        : prev.lastCheckIn === yesterday
-          ? prev.streak + 1
-          : 1;
-      const log: CheckInLog = { date: today, answers, ...score };
+      const newStreak =
+        prev.lastCheckIn === todayStr
+          ? prev.streak
+          : prev.lastCheckIn === yesterday
+            ? prev.streak + 1
+            : 1;
+      const log: CheckInLog = { date: todayStr, answers, ...score };
       return {
         ...prev,
         xp: Math.max(0, prev.xp + score.xp),
@@ -84,11 +93,11 @@ export function useTreeState() {
         birds: prev.birds + score.birds,
         co2: Math.round((prev.co2 + score.co2) * 10) / 10,
         streak: newStreak,
-        lastCheckIn: today,
+        lastCheckIn: todayStr,
         logs: [log, ...prev.logs].slice(0, 60),
       };
     });
-    return score;
+    return didSubmit ? score : null;
   }, []);
 
   const setMonthlyStory = useCallback((story: string) => {
@@ -96,5 +105,6 @@ export function useTreeState() {
     setState((p) => ({ ...p, monthlyStory: { month, story } }));
   }, []);
 
-  return { state, hydrated, submitCheckIn, setMonthlyStory };
+  return { state, hydrated, submitCheckIn, setMonthlyStory, entriesToday, canCheckIn, dailyLimit: DAILY_LIMIT };
 }
+

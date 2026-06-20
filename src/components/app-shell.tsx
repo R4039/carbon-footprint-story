@@ -1,7 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Trees, Target, Users, BookOpen, ClipboardCheck, Sun, Moon } from "lucide-react";
+import { Trees, Target, Users, BookOpen, ClipboardCheck } from "lucide-react";
 import type { ReactNode } from "react";
-import { useTheme } from "@/lib/theme";
 
 const NAV = [
   { to: "/", label: "My Forest", icon: Trees },
@@ -13,8 +12,7 @@ const NAV = [
 
 export function AppShell({ children, level }: { children: ReactNode; level?: string }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { theme, toggle } = useTheme();
-  const isNight = theme === "night";
+
 
   return (
     <div className="min-h-screen bg-cream text-stone-900 transition-colors duration-500 dark:text-sage-soft">
@@ -50,13 +48,7 @@ export function AppShell({ children, level }: { children: ReactNode; level?: str
                 {level}
               </div>
             )}
-            <button
-              onClick={toggle}
-              aria-label={isNight ? "Switch to day" : "Switch to night"}
-              className="grid size-9 place-items-center rounded-full border border-stone-200 bg-white/70 text-forest transition-transform hover:scale-105 dark:border-white/10 dark:bg-white/5"
-            >
-              {isNight ? <Sun className="size-4" /> : <Moon className="size-4" />}
-            </button>
+
             <div className="grid size-9 place-items-center rounded-full bg-bloom-soft text-sm font-bold text-forest">
               E
             </div>
