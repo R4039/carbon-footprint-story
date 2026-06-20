@@ -251,22 +251,29 @@ export function ForestIsland({
           .map((t, i) => {
             const isNewest = t.idx === trees.length - 1 && trees.length > 0;
             return (
-              <g
-                key={`t${t.idx}`}
-                transform={`translate(${t.x},${t.y}) scale(${t.scale})`}
-                style={{
-                  transformOrigin: `${t.x}px ${t.y}px`,
-                  animation: isNewest
-                    ? `sway ${5 + (i % 4)}s ease-in-out infinite, tree-burst 1.1s cubic-bezier(.34,1.56,.64,1) both`
-                    : `sway ${5 + (i % 4)}s ease-in-out infinite, fade-in-up 0.7s ease-out both`,
-                  animationDelay: `${(i % 6) * 0.3}s, ${i * 0.04}s`,
-                  filter: isNewest ? "drop-shadow(0 0 14px rgba(255,240,170,0.85))" : undefined,
-                }}
-              >
-                <Tree variant={t.variant} palette={t.palette} isNight={isNight} season={season} />
+              // Outer <g> = positioning only (SVG transform attribute).
+              <g key={`t${t.idx}`} transform={`translate(${t.x},${t.y})`}>
+                {/* Middle <g> = CSS-driven entrance + sway. */}
+                <g
+                  style={{
+                    transformOrigin: "center",
+                    transformBox: "fill-box",
+                    animation: isNewest
+                      ? "tree-pop 1.1s cubic-bezier(.34,1.56,.64,1) both"
+                      : "tree-grow 0.8s ease-out both",
+                    animationDelay: `${i * 0.05}s`,
+                    filter: isNewest ? "drop-shadow(0 0 18px rgba(255,240,170,0.9))" : undefined,
+                  }}
+                >
+                  {/* Inner <g> = constant scale (SVG attr, never clobbered). */}
+                  <g transform={`scale(${t.scale})`}>
+                    <Tree variant={t.variant} palette={t.palette} isNight={isNight} season={season} />
+                  </g>
+                </g>
               </g>
             );
           })}
+
 
       </svg>
 
@@ -357,13 +364,19 @@ export function ForestIsland({
           10% { opacity: 0.95; }
           100% { transform: translate(110vw, 40px) rotate(360deg); opacity: 0; }
         }
-        @keyframes tree-burst {
-          0% { transform: translateY(14px) scale(0); opacity: 0; }
-          55% { transform: translateY(-4px) scale(1.18); opacity: 1; }
-          75% { transform: translateY(0) scale(0.96); }
-          100% { transform: translateY(0) scale(1); opacity: 1; }
+        @keyframes tree-grow {
+          0% { transform: scale(0); opacity: 0; }
+          70% { transform: scale(1.08); opacity: 1; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes tree-pop {
+          0% { transform: scale(0); opacity: 0; }
+          55% { transform: scale(1.28); opacity: 1; }
+          80% { transform: scale(0.94); }
+          100% { transform: scale(1); opacity: 1; }
         }
       `}</style>
+
 
     </div>
   );
