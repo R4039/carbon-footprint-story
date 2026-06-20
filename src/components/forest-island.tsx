@@ -364,13 +364,19 @@ export function ForestIsland({
           10% { opacity: 0.95; }
           100% { transform: translate(110vw, 40px) rotate(360deg); opacity: 0; }
         }
-        @keyframes tree-burst {
-          0% { transform: translateY(14px) scale(0); opacity: 0; }
-          55% { transform: translateY(-4px) scale(1.18); opacity: 1; }
-          75% { transform: translateY(0) scale(0.96); }
-          100% { transform: translateY(0) scale(1); opacity: 1; }
+        @keyframes tree-grow {
+          0% { transform: scale(0); opacity: 0; }
+          70% { transform: scale(1.08); opacity: 1; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes tree-pop {
+          0% { transform: scale(0); opacity: 0; }
+          55% { transform: scale(1.28); opacity: 1; }
+          80% { transform: scale(0.94); }
+          100% { transform: scale(1); opacity: 1; }
         }
       `}</style>
+
 
     </div>
   );
