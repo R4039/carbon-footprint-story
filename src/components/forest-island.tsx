@@ -38,31 +38,35 @@ export function ForestIsland({
 
   return (
     <div className="relative aspect-[16/11] w-full overflow-hidden rounded-3xl ring-1 ring-white/40">
-      {/* Sky */}
+      {/* Sunrise / Sunset sky */}
       <div
-        className="absolute inset-0 transition-colors duration-700"
+        className="absolute inset-0"
         style={{
-          background: isNight
-            ? "linear-gradient(180deg,#1a1b4b 0%, #3b2f8a 45%, #5b3a8e 80%, #ffb88c 100%)"
-            : dry
-              ? "linear-gradient(180deg,#ffe6a8 0%, #ffc987 55%, #ffb074 100%)"
-              : "linear-gradient(180deg,#a0e8ff 0%, #ffdbeb 55%, #fff3b0 100%)",
+          background: dry
+            ? "linear-gradient(180deg,#ffd28a 0%, #ff9a6b 40%, #ff7a8a 70%, #b06bb8 100%)"
+            : "linear-gradient(180deg,#9be0ff 0%, #ffcfb0 35%, #ff9eb8 60%, #ffd47a 85%, #ffe9b8 100%)",
+        }}
+      />
+      {/* Soft sun glow band */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-[28%] h-[40%]"
+        style={{
+          background:
+            "radial-gradient(ellipse at 78% 30%, rgba(255,210,140,0.55) 0%, rgba(255,170,120,0.15) 40%, transparent 70%)",
         }}
       />
 
-      {/* Sun / Moon */}
+      {/* Sun */}
       <div
-        className="absolute right-[8%] top-[8%] grid size-20 place-items-center rounded-full transition-all duration-700"
+        className="absolute right-[10%] top-[14%] size-24 rounded-full"
         style={{
-          background: isNight
-            ? "radial-gradient(circle at 35% 35%, #fffbe6, #ffe5a8 70%, transparent 71%)"
-            : "radial-gradient(circle, #fff9a0 0%, #ffb84d 60%, rgba(255,184,77,0) 70%)",
-          boxShadow: isNight
-            ? "0 0 80px rgba(255,229,168,0.55)"
-            : "0 0 100px rgba(255,184,77,0.7)",
+          background:
+            "radial-gradient(circle at 40% 40%, #fff7d6 0%, #ffd07a 55%, rgba(255,184,77,0) 72%)",
+          boxShadow: "0 0 120px rgba(255,184,107,0.7), 0 0 60px rgba(255,210,140,0.8)",
         }}
         aria-hidden
       />
+
 
       {/* Distant clouds */}
       {!isNight && (
