@@ -338,29 +338,37 @@ function Dashboard() {
             </div>
           </section>
 
-          <section className="rounded-3xl bg-stone-50 p-6 dark:bg-white/[0.03]">
+          <section className="rounded-3xl border border-stone-100 bg-gradient-to-br from-white to-sage-soft/30 p-6 shadow-card dark:border-white/10 dark:bg-white/[0.04] dark:from-white/[0.04] dark:to-white/[0.02]">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-lg font-bold text-forest">Active Missions</h3>
-              <Link to="/missions" className="text-xs font-bold text-forest underline-offset-4 hover:underline">
+              <Link to="/missions" className="text-xs font-bold text-forest underline-offset-4 hover:underline dark:text-sage">
                 View All
               </Link>
             </div>
             <div className="space-y-3">
-              {MISSIONS.slice(0, 3).map((m) => (
-                <div key={m.id} className="flex items-center gap-3 rounded-2xl border border-stone-200/60 bg-white p-3 dark:border-white/5 dark:bg-white/[0.03]">
-                  <div className="grid size-11 shrink-0 place-items-center rounded-xl bg-sage-soft text-xl">{m.emoji}</div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-bold">{m.title}</p>
-                    <p className="text-[11px] text-stone-400">Reward: {m.reward}</p>
-                    <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-stone-100 dark:bg-white/10">
-                      <div className="h-full rounded-full bg-gradient-to-r from-sage to-forest" style={{ width: `${(m.progress / m.goal) * 100}%` }} />
+              {MISSIONS.slice(0, 3).map((m) => {
+                const pct = Math.round((m.progress / m.goal) * 100);
+                return (
+                  <div key={m.id} className="group flex items-center gap-3 rounded-2xl border border-stone-200/70 bg-white p-3 transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-white/10 dark:bg-white/[0.05]">
+                    <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-sage-soft to-bloom-soft text-2xl shadow-inner dark:from-white/10 dark:to-white/[0.04]">
+                      {m.emoji}
                     </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-bold text-forest dark:text-sage">{m.title}</p>
+                      <p className="mt-0.5 inline-flex items-center gap-1 rounded-full bg-bloom-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-forest dark:bg-white/10 dark:text-sage">
+                        🎁 {m.reward}
+                      </p>
+                      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-stone-100 dark:bg-white/10">
+                        <div className="h-full rounded-full bg-gradient-to-r from-sage via-emerald-400 to-forest transition-all" style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                    <span className="text-xs font-bold text-stone-600 dark:text-stone-300">{m.progress}/{m.goal}</span>
                   </div>
-                  <span className="text-[11px] font-bold text-stone-500">{m.progress}/{m.goal}</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
+
         </div>
       </main>
     </AppShell>
