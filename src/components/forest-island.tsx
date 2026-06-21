@@ -582,23 +582,26 @@ function Tree({
   }
 
   if (variant === "blossom") {
-    const blossom = leaf;
-    const blossomHi = leafHi;
+    // Use pearl slot as the bright blossom color (pink/white/yellow/red)
+    const blossom = palette.pearl ?? "#ff4d8d";
     return (
       <g>
         <rect x="-3" y="-10" width="6" height="14" fill={trunk} rx="1" />
-        <circle cx="0" cy="-26" r="22" fill={blossom} />
-        <circle cx="-14" cy="-20" r="13" fill={blossom} opacity="0.95" />
-        <circle cx="14" cy="-20" r="13" fill={blossom} opacity="0.95" />
-        <circle cx="0" cy="-40" r="11" fill={blossom} opacity="0.95" />
-        <circle cx="-6" cy="-32" r="6" fill={blossomHi} opacity="0.85" />
-        <circle cx="9" cy="-30" r="5" fill={blossomHi} opacity="0.85" />
-        <circle cx="0" cy="-24" r="2" fill={pearl} filter="url(#pearlGlow)" />
-        <circle cx="-10" cy="-18" r="1.8" fill={pearl} filter="url(#pearlGlow)" />
-        <circle cx="10" cy="-22" r="1.8" fill={pearl} filter="url(#pearlGlow)" />
-        <circle cx="-5" cy="-35" r="1.5" fill={pearl} filter="url(#pearlGlow)" />
-        <circle cx="7" cy="-36" r="1.6" fill={pearl} filter="url(#pearlGlow)" />
-        <circle cx="-2" cy="-15" r="1.4" fill={pearl} filter="url(#pearlGlow)" />
+        {/* Green canopy */}
+        <circle cx="0" cy="-26" r="22" fill={leaf} />
+        <circle cx="-14" cy="-20" r="13" fill={leaf} opacity="0.95" />
+        <circle cx="14" cy="-20" r="13" fill={leaf} opacity="0.95" />
+        <circle cx="0" cy="-40" r="11" fill={leaf} opacity="0.95" />
+        <circle cx="-6" cy="-32" r="6" fill={leafHi} opacity="0.85" />
+        <circle cx="9" cy="-30" r="5" fill={leafHi} opacity="0.85" />
+        {/* Bright blossoms */}
+        <circle cx="-8" cy="-30" r="2.6" fill={blossom} filter="url(#pearlGlow)" />
+        <circle cx="6" cy="-34" r="2.4" fill={blossom} filter="url(#pearlGlow)" />
+        <circle cx="-2" cy="-22" r="2.2" fill={blossom} filter="url(#pearlGlow)" />
+        <circle cx="11" cy="-22" r="2.3" fill={blossom} filter="url(#pearlGlow)" />
+        <circle cx="-12" cy="-18" r="2" fill={blossom} filter="url(#pearlGlow)" />
+        <circle cx="2" cy="-40" r="2" fill={blossom} filter="url(#pearlGlow)" />
+        <circle cx="-4" cy="-12" r="1.8" fill={blossom} filter="url(#pearlGlow)" />
       </g>
     );
   }
