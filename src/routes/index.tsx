@@ -163,6 +163,48 @@ function Dashboard() {
             </div>
           </section>
 
+          {/* How Your Forest Grows */}
+          <section className="rounded-3xl border border-sage/40 bg-gradient-to-br from-sage-soft/70 via-white to-bloom-soft/40 p-6 shadow-card dark:from-white/[0.04] dark:via-white/[0.02] dark:to-white/[0.04] dark:border-white/10">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="grid size-10 place-items-center rounded-2xl bg-forest text-lg text-white shadow-md shadow-forest/20">🌱</div>
+              <div>
+                <h3 className="text-lg font-bold text-forest">How Your Forest Grows</h3>
+                <p className="text-xs text-stone-600 dark:text-stone-300">A living world that responds to your choices.</p>
+              </div>
+            </div>
+            <ul className="grid gap-2.5 sm:grid-cols-2">
+              {[
+                { e: "📝", t: "Complete 2 eco check-ins daily" },
+                { e: "⭐", t: "Earn growth points through sustainable choices" },
+                { e: "🌳", t: "Trees grow visibly after each check-in" },
+                { e: "🦋", t: "Unlock flowers, butterflies, birds & fireflies" },
+                { e: "🌍", t: "Build your own thriving carbon-positive forest" },
+              ].map((it, i) => (
+                <li key={i} className="flex items-start gap-3 rounded-2xl border border-white/60 bg-white/70 p-3 backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.04]">
+                  <span className="text-xl leading-none">{it.e}</span>
+                  <span className="text-sm font-medium text-forest dark:text-sage">{it.t}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* Environmental Impact */}
+          <section className="rounded-3xl border border-stone-100 bg-white p-6 shadow-card dark:border-white/10 dark:bg-white/[0.04]">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="flex items-center gap-2 text-lg font-bold text-forest">
+                <Leaf className="size-5 text-sage" /> Environmental Impact
+              </h3>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">All time</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <ImpactCard tone="forest" icon="🌳" label="Trees Grown" value={treesGrown} unit="trees" />
+              <ImpactCard tone="sky" icon="💧" label="Water Saved" value={waterSaved} unit="liters" />
+              <ImpactCard tone="sage" icon="🌫️" label="CO₂ Reduced" value={state.co2} unit="kg" />
+              <ImpactCard tone="bloom" icon="❤️" label="Forest Health" value={`${Math.round(health)}%`} />
+            </div>
+          </section>
+
+
           {/* Forest Chronicle */}
           <section className="grid grid-cols-1 items-center gap-6 overflow-hidden rounded-3xl bg-gradient-to-br from-forest via-forest to-forest-deep p-6 text-cream shadow-eco md:grid-cols-[1fr_220px] md:p-8 dark:from-[#143028] dark:via-[#0e1f1a] dark:to-[#0a1612]">
             <div className="space-y-4">
