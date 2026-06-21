@@ -404,6 +404,42 @@ function StatCard({
 function BookIcon() {
   return (
     <svg viewBox="0 0 24 24" className="size-3" fill="none" stroke="currentColor" strokeWidth="2">
+function ImpactCard({
+  tone,
+  icon,
+  label,
+  value,
+  unit,
+}: {
+  tone: "forest" | "sky" | "sage" | "bloom";
+  icon: string;
+  label: string;
+  value: number | string;
+  unit?: string;
+}) {
+  const toneMap = {
+    forest: "from-emerald-50 to-emerald-100/60 text-emerald-900 dark:from-emerald-500/10 dark:to-emerald-500/5 dark:text-emerald-200",
+    sky: "from-sky-50 to-sky-100/60 text-sky-900 dark:from-sky-500/10 dark:to-sky-500/5 dark:text-sky-200",
+    sage: "from-lime-50 to-emerald-100/60 text-emerald-900 dark:from-lime-500/10 dark:to-emerald-500/5 dark:text-lime-200",
+    bloom: "from-rose-50 to-pink-100/60 text-rose-900 dark:from-rose-500/10 dark:to-pink-500/5 dark:text-rose-200",
+  };
+  return (
+    <div className={`group relative overflow-hidden rounded-2xl border border-white/60 bg-gradient-to-br p-4 transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-white/10 ${toneMap[tone]}`}>
+      <div className="flex items-center justify-between">
+        <span className="text-2xl transition-transform group-hover:scale-110" aria-hidden>{icon}</span>
+        <span className="text-[9px] font-bold uppercase tracking-wider opacity-70">{label}</span>
+      </div>
+      <div className="mt-2 flex items-baseline gap-1">
+        <span className="font-serif text-2xl font-bold">{value}</span>
+        {unit && <span className="text-[10px] font-semibold opacity-70">{unit}</span>}
+      </div>
+    </div>
+  );
+}
+
+function BookIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="size-3" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
