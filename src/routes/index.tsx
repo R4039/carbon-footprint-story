@@ -205,22 +205,22 @@ function Dashboard() {
           </section>
 
 
-          {/* Forest Chronicle */}
-          <section className="grid grid-cols-1 items-center gap-6 overflow-hidden rounded-3xl bg-gradient-to-br from-forest via-forest to-forest-deep p-6 text-cream shadow-eco md:grid-cols-[1fr_220px] md:p-8 dark:from-[#143028] dark:via-[#0e1f1a] dark:to-[#0a1612]">
+          {/* Forest Chronicle — storybook feel, fixed contrast in both themes */}
+          <section className="grid grid-cols-1 items-center gap-6 overflow-hidden rounded-3xl bg-gradient-to-br from-[#1B4332] via-[#143028] to-[#0F2A1F] p-6 shadow-eco md:grid-cols-[1fr_220px] md:p-8">
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 rounded-full border border-sage/30 bg-sage/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
-                <BookIcon /> Forest Chronicle
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#95D5B2]/40 bg-[#95D5B2]/15 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#D8F3DC]">
+                <BookIcon /> Forest Chronicle · Nature Journal
               </div>
-              <h2 className="font-serif text-2xl italic leading-tight md:text-3xl">
+              <h2 className="font-serif text-3xl italic leading-tight text-[#FDFCF8] md:text-4xl drop-shadow-sm">
                 "{state.monthlyStory ? state.monthlyStory.month : "The Month of Quiet Roots"}"
               </h2>
-              <p className="max-w-prose text-sage-soft/85 leading-relaxed">
+              <p className="max-w-prose text-base leading-relaxed text-[#E8F5EC]/95">
                 {state.monthlyStory?.story ??
                   "Your forest weathered several challenging commutes but stayed strong. Thanks to your consistent plant-based choices, new flowers bloomed and butterflies returned to the canopy."}
               </p>
               <Link
                 to="/story"
-                className="group inline-flex items-center gap-2 rounded-xl bg-sage px-5 py-3 text-sm font-bold text-forest transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-sage/30"
+                className="group inline-flex items-center gap-2 rounded-xl bg-[#95D5B2] px-5 py-3 text-sm font-bold text-[#0F2A1F] transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-[#95D5B2]/30"
               >
                 Explore My Journey
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
@@ -229,12 +229,13 @@ function Dashboard() {
             <img
               src={storyCover}
               alt="A golden forest illuminated by morning mist"
-              className="aspect-[4/5] w-full rounded-2xl object-cover ring-1 ring-white/10"
+              className="aspect-[4/5] w-full rounded-2xl object-cover ring-1 ring-white/15 shadow-lg"
               width={512}
               height={640}
               loading="lazy"
             />
           </section>
+
 
           {/* Achievements */}
           <section className="rounded-3xl border border-stone-100 bg-white p-6 shadow-card dark:border-white/5 dark:bg-white/[0.03]">
