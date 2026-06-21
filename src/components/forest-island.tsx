@@ -30,13 +30,15 @@ export function ForestIsland({
   const mushrooms = useMemo(() => buildMushrooms(entriesCount), [entriesCount]);
 
   const dry = level <= 1;
-  const grassA = isNight ? "#16513a" : dry ? "#e8c878" : seasonColor(season, "grassA");
-  const grassB = isNight ? "#0d3a28" : dry ? "#c4a258" : seasonColor(season, "grassB");
-  const grassHi = isNight ? "#1f6a4a" : dry ? "#f3d995" : seasonColor(season, "grassHi");
-  const riverA = isNight ? "#2554a8" : dry ? "#8aa05a" : "#7be0ff";
-  const riverB = isNight ? "#14306b" : dry ? "#6a7d3d" : "#22a7e8";
-  const earth = isNight ? "#3a2a4a" : "#a76a3a";
-  const earthShade = isNight ? "#22182f" : "#7a4624";
+  // Subtly green ground even when "dry"
+  const grassA = isNight ? "#16513a" : dry ? "#b8d896" : seasonColor(season, "grassA");
+  const grassB = isNight ? "#0d3a28" : dry ? "#8fb56a" : seasonColor(season, "grassB");
+  const grassHi = isNight ? "#1f6a4a" : dry ? "#d0e8a8" : seasonColor(season, "grassHi");
+  const riverA = isNight ? "#2554a8" : "#7be0ff";
+  const riverB = isNight ? "#14306b" : "#22a7e8";
+  // Subtle green-tinted earth instead of brown
+  const earth = isNight ? "#2a3a32" : "#5e8b5a";
+  const earthShade = isNight ? "#1a221d" : "#3e6240";
 
   return (
     <div className="relative aspect-[16/11] w-full overflow-hidden rounded-3xl ring-1 ring-white/40">
