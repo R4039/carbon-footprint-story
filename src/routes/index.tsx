@@ -401,9 +401,8 @@ function StatCard({
   );
 }
 
-function BookIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-3" fill="none" stroke="currentColor" strokeWidth="2">
+
+
 function ImpactCard({
   tone,
   icon,
