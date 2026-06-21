@@ -59,8 +59,11 @@ function Dashboard() {
     const recent = [...state.logs.slice(0, 7), ...history.entries.slice(0, 7)];
     const scores = recent.map((r) => ("score" in r ? r.score : Math.min(100, 40 + (r.xp ?? 0))));
     const avg = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : 55;
-    const lvl: 1 | 2 | 3 | 4 | 5 =
-      avg >= 80 ? 5 : avg >= 65 ? 4 : avg >= 50 ? 3 : avg >= 30 ? 2 : 1;
+    // Faster level progression — level boosted by entries as well
+    const entryBoost = Math.min(2, Math.floor((state.logs.length + history.entries.length) / 3));
+    let lvl: 1 | 2 | 3 | 4 | 5 =
+      avg >= 70 ? 5 : avg >= 55 ? 4 : avg >= 40 ? 3 : avg >= 25 ? 2 : 1;
+    lvl = Math.min(5, lvl + entryBoost) as 1 | 2 | 3 | 4 | 5;
     const monthIdx = new Date().getMonth();
     const seasonIdx = Math.floor(((monthIdx + 1) % 12) / 3);
     return {
@@ -71,8 +74,9 @@ function Dashboard() {
     };
   }, [state.logs, history.entries, state.butterflies, state.birds]);
 
-  const treesGrown = [0, 2, 5, 9, 13, 15][forestLevel] + entriesCount;
+  const treesGrown = [0, 3, 7, 12, 16, 20][forestLevel] + entriesCount * 2;
   const wildlife = state.butterflies + state.birds + (forestLevel >= 3 ? 2 : 0) + (forestLevel >= 4 ? 3 : 0);
+  const waterSaved = Math.round(entriesCount * 18 + state.streak * 4);
 
   const achievements = useMemo(() => [
     { id: "sapling", icon: "🌱", label: "First Sapling", unlocked: entriesCount >= 1 },
@@ -159,22 +163,64 @@ function Dashboard() {
             </div>
           </section>
 
-          {/* Forest Chronicle */}
-          <section className="grid grid-cols-1 items-center gap-6 overflow-hidden rounded-3xl bg-gradient-to-br from-forest via-forest to-forest-deep p-6 text-cream shadow-eco md:grid-cols-[1fr_220px] md:p-8 dark:from-[#143028] dark:via-[#0e1f1a] dark:to-[#0a1612]">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 rounded-full border border-sage/30 bg-sage/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
-                <BookIcon /> Forest Chronicle
+          {/* How Your Forest Grows */}
+          <section className="rounded-3xl border border-sage/40 bg-gradient-to-br from-sage-soft/70 via-white to-bloom-soft/40 p-6 shadow-card dark:from-white/[0.04] dark:via-white/[0.02] dark:to-white/[0.04] dark:border-white/10">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="grid size-10 place-items-center rounded-2xl bg-forest text-lg text-white shadow-md shadow-forest/20">🌱</div>
+              <div>
+                <h3 className="text-lg font-bold text-forest">How Your Forest Grows</h3>
+                <p className="text-xs text-stone-600 dark:text-stone-300">A living world that responds to your choices.</p>
               </div>
-              <h2 className="font-serif text-2xl italic leading-tight md:text-3xl">
+            </div>
+            <ul className="grid gap-2.5 sm:grid-cols-2">
+              {[
+                { e: "📝", t: "Complete 2 eco check-ins daily" },
+                { e: "⭐", t: "Earn growth points through sustainable choices" },
+                { e: "🌳", t: "Trees grow visibly after each check-in" },
+                { e: "🦋", t: "Unlock flowers, butterflies, birds & fireflies" },
+                { e: "🌍", t: "Build your own thriving carbon-positive forest" },
+              ].map((it, i) => (
+                <li key={i} className="flex items-start gap-3 rounded-2xl border border-white/60 bg-white/70 p-3 backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.04]">
+                  <span className="text-xl leading-none">{it.e}</span>
+                  <span className="text-sm font-medium text-forest dark:text-sage">{it.t}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* Environmental Impact */}
+          <section className="rounded-3xl border border-stone-100 bg-white p-6 shadow-card dark:border-white/10 dark:bg-white/[0.04]">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="flex items-center gap-2 text-lg font-bold text-forest">
+                <Leaf className="size-5 text-sage" /> Environmental Impact
+              </h3>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">All time</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <ImpactCard tone="forest" icon="🌳" label="Trees Grown" value={treesGrown} unit="trees" />
+              <ImpactCard tone="sky" icon="💧" label="Water Saved" value={waterSaved} unit="liters" />
+              <ImpactCard tone="sage" icon="🌫️" label="CO₂ Reduced" value={state.co2} unit="kg" />
+              <ImpactCard tone="bloom" icon="❤️" label="Forest Health" value={`${Math.round(health)}%`} />
+            </div>
+          </section>
+
+
+          {/* Forest Chronicle — storybook feel, fixed contrast in both themes */}
+          <section className="grid grid-cols-1 items-center gap-6 overflow-hidden rounded-3xl bg-gradient-to-br from-[#1B4332] via-[#143028] to-[#0F2A1F] p-6 shadow-eco md:grid-cols-[1fr_220px] md:p-8">
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#95D5B2]/40 bg-[#95D5B2]/15 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#D8F3DC]">
+                <BookIcon /> Forest Chronicle · Nature Journal
+              </div>
+              <h2 className="font-serif text-3xl italic leading-tight text-[#FDFCF8] md:text-4xl drop-shadow-sm">
                 "{state.monthlyStory ? state.monthlyStory.month : "The Month of Quiet Roots"}"
               </h2>
-              <p className="max-w-prose text-sage-soft/85 leading-relaxed">
+              <p className="max-w-prose text-base leading-relaxed text-[#E8F5EC]/95">
                 {state.monthlyStory?.story ??
                   "Your forest weathered several challenging commutes but stayed strong. Thanks to your consistent plant-based choices, new flowers bloomed and butterflies returned to the canopy."}
               </p>
               <Link
                 to="/story"
-                className="group inline-flex items-center gap-2 rounded-xl bg-sage px-5 py-3 text-sm font-bold text-forest transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-sage/30"
+                className="group inline-flex items-center gap-2 rounded-xl bg-[#95D5B2] px-5 py-3 text-sm font-bold text-[#0F2A1F] transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-[#95D5B2]/30"
               >
                 Explore My Journey
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
@@ -183,12 +229,13 @@ function Dashboard() {
             <img
               src={storyCover}
               alt="A golden forest illuminated by morning mist"
-              className="aspect-[4/5] w-full rounded-2xl object-cover ring-1 ring-white/10"
+              className="aspect-[4/5] w-full rounded-2xl object-cover ring-1 ring-white/15 shadow-lg"
               width={512}
               height={640}
               loading="lazy"
             />
           </section>
+
 
           {/* Achievements */}
           <section className="rounded-3xl border border-stone-100 bg-white p-6 shadow-card dark:border-white/5 dark:bg-white/[0.03]">
@@ -291,29 +338,37 @@ function Dashboard() {
             </div>
           </section>
 
-          <section className="rounded-3xl bg-stone-50 p-6 dark:bg-white/[0.03]">
+          <section className="rounded-3xl border border-stone-100 bg-gradient-to-br from-white to-sage-soft/30 p-6 shadow-card dark:border-white/10 dark:bg-white/[0.04] dark:from-white/[0.04] dark:to-white/[0.02]">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-lg font-bold text-forest">Active Missions</h3>
-              <Link to="/missions" className="text-xs font-bold text-forest underline-offset-4 hover:underline">
+              <Link to="/missions" className="text-xs font-bold text-forest underline-offset-4 hover:underline dark:text-sage">
                 View All
               </Link>
             </div>
             <div className="space-y-3">
-              {MISSIONS.slice(0, 3).map((m) => (
-                <div key={m.id} className="flex items-center gap-3 rounded-2xl border border-stone-200/60 bg-white p-3 dark:border-white/5 dark:bg-white/[0.03]">
-                  <div className="grid size-11 shrink-0 place-items-center rounded-xl bg-sage-soft text-xl">{m.emoji}</div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-bold">{m.title}</p>
-                    <p className="text-[11px] text-stone-400">Reward: {m.reward}</p>
-                    <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-stone-100 dark:bg-white/10">
-                      <div className="h-full rounded-full bg-gradient-to-r from-sage to-forest" style={{ width: `${(m.progress / m.goal) * 100}%` }} />
+              {MISSIONS.slice(0, 3).map((m) => {
+                const pct = Math.round((m.progress / m.goal) * 100);
+                return (
+                  <div key={m.id} className="group flex items-center gap-3 rounded-2xl border border-stone-200/70 bg-white p-3 transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-white/10 dark:bg-white/[0.05]">
+                    <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-sage-soft to-bloom-soft text-2xl shadow-inner dark:from-white/10 dark:to-white/[0.04]">
+                      {m.emoji}
                     </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-bold text-forest dark:text-sage">{m.title}</p>
+                      <p className="mt-0.5 inline-flex items-center gap-1 rounded-full bg-bloom-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-forest dark:bg-white/10 dark:text-sage">
+                        🎁 {m.reward}
+                      </p>
+                      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-stone-100 dark:bg-white/10">
+                        <div className="h-full rounded-full bg-gradient-to-r from-sage via-emerald-400 to-forest transition-all" style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                    <span className="text-xs font-bold text-stone-600 dark:text-stone-300">{m.progress}/{m.goal}</span>
                   </div>
-                  <span className="text-[11px] font-bold text-stone-500">{m.progress}/{m.goal}</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
+
         </div>
       </main>
     </AppShell>
@@ -342,6 +397,41 @@ function StatCard({
         {trend === "down" && <span className="text-[10px] font-bold text-bloom">▼</span>}
       </div>
       <span className="font-serif text-2xl text-forest">{value}</span>
+    </div>
+  );
+}
+
+
+
+function ImpactCard({
+  tone,
+  icon,
+  label,
+  value,
+  unit,
+}: {
+  tone: "forest" | "sky" | "sage" | "bloom";
+  icon: string;
+  label: string;
+  value: number | string;
+  unit?: string;
+}) {
+  const toneMap = {
+    forest: "from-emerald-50 to-emerald-100/60 text-emerald-900 dark:from-emerald-500/10 dark:to-emerald-500/5 dark:text-emerald-200",
+    sky: "from-sky-50 to-sky-100/60 text-sky-900 dark:from-sky-500/10 dark:to-sky-500/5 dark:text-sky-200",
+    sage: "from-lime-50 to-emerald-100/60 text-emerald-900 dark:from-lime-500/10 dark:to-emerald-500/5 dark:text-lime-200",
+    bloom: "from-rose-50 to-pink-100/60 text-rose-900 dark:from-rose-500/10 dark:to-pink-500/5 dark:text-rose-200",
+  };
+  return (
+    <div className={`group relative overflow-hidden rounded-2xl border border-white/60 bg-gradient-to-br p-4 transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-white/10 ${toneMap[tone]}`}>
+      <div className="flex items-center justify-between">
+        <span className="text-2xl transition-transform group-hover:scale-110" aria-hidden>{icon}</span>
+        <span className="text-[9px] font-bold uppercase tracking-wider opacity-70">{label}</span>
+      </div>
+      <div className="mt-2 flex items-baseline gap-1">
+        <span className="font-serif text-2xl font-bold">{value}</span>
+        {unit && <span className="text-[10px] font-semibold opacity-70">{unit}</span>}
+      </div>
     </div>
   );
 }

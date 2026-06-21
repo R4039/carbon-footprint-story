@@ -30,13 +30,15 @@ export function ForestIsland({
   const mushrooms = useMemo(() => buildMushrooms(entriesCount), [entriesCount]);
 
   const dry = level <= 1;
-  const grassA = isNight ? "#16513a" : dry ? "#e8c878" : seasonColor(season, "grassA");
-  const grassB = isNight ? "#0d3a28" : dry ? "#c4a258" : seasonColor(season, "grassB");
-  const grassHi = isNight ? "#1f6a4a" : dry ? "#f3d995" : seasonColor(season, "grassHi");
-  const riverA = isNight ? "#2554a8" : dry ? "#8aa05a" : "#7be0ff";
-  const riverB = isNight ? "#14306b" : dry ? "#6a7d3d" : "#22a7e8";
-  const earth = isNight ? "#3a2a4a" : "#a76a3a";
-  const earthShade = isNight ? "#22182f" : "#7a4624";
+  // Subtly green ground even when "dry"
+  const grassA = isNight ? "#16513a" : dry ? "#b8d896" : seasonColor(season, "grassA");
+  const grassB = isNight ? "#0d3a28" : dry ? "#8fb56a" : seasonColor(season, "grassB");
+  const grassHi = isNight ? "#1f6a4a" : dry ? "#d0e8a8" : seasonColor(season, "grassHi");
+  const riverA = isNight ? "#2554a8" : "#7be0ff";
+  const riverB = isNight ? "#14306b" : "#22a7e8";
+  // Subtle green-tinted earth instead of brown
+  const earth = isNight ? "#2a3a32" : "#5e8b5a";
+  const earthShade = isNight ? "#1a221d" : "#3e6240";
 
   return (
     <div className="relative aspect-[16/11] w-full overflow-hidden rounded-3xl ring-1 ring-white/40">
@@ -510,12 +512,20 @@ type TreePalette = {
 };
 
 const VIBRANT_PALETTES: TreePalette[] = [
-  { trunk: "#7a4a23", leaf: "#34d17a", leafHi: "#7ff0a8", pearl: "#fff5e0" },
-  { trunk: "#7a4a23", leaf: "#2d9a5c", leafHi: "#5fd88a", pearl: "#ffffff" },
+  { trunk: "#7a4a23", leaf: "#34d17a", leafHi: "#7ff0a8", pearl: "#ffffff" },
+  { trunk: "#6a4120", leaf: "#2d9a5c", leafHi: "#5fd88a", pearl: "#ffffff" },
   { trunk: "#7a4a23", leaf: "#4caf50", leafHi: "#8ce082", pearl: "#fffacd" },
-  { trunk: "#5a3a1c", leaf: "#22c073", leafHi: "#7ce39a", pearl: "#fff58a" },
+  { trunk: "#5a3a1c", leaf: "#22c073", leafHi: "#7ce39a", pearl: "#ffffff" },
   { trunk: "#7a4a23", leaf: "#1db954", leafHi: "#6de89a", pearl: "#ffffff" },
   { trunk: "#7a4a23", leaf: "#3cb371", leafHi: "#7fdfb4", pearl: "#f0fff0" },
+];
+
+// Blossom-only palette: green canopy + colorful flower clusters on top
+const BLOSSOM_PALETTES = [
+  { trunk: "#7a4a23", leaf: "#2d9a5c", leafHi: "#5fd88a", blossom: "#ff4d8d" }, // bright pink
+  { trunk: "#7a4a23", leaf: "#34d17a", leafHi: "#7ff0a8", blossom: "#ffffff" }, // white
+  { trunk: "#7a4a23", leaf: "#22c073", leafHi: "#7ce39a", blossom: "#ffe14a" }, // bright yellow
+  { trunk: "#7a4a23", leaf: "#3cb371", leafHi: "#7fdfb4", blossom: "#ff2e3f" }, // shiny red
 ];
 
 function Tree({
@@ -572,23 +582,26 @@ function Tree({
   }
 
   if (variant === "blossom") {
-    const blossom = leaf;
-    const blossomHi = leafHi;
+    // Use pearl slot as the bright blossom color (pink/white/yellow/red)
+    const blossom = palette.pearl ?? "#ff4d8d";
     return (
       <g>
         <rect x="-3" y="-10" width="6" height="14" fill={trunk} rx="1" />
-        <circle cx="0" cy="-26" r="22" fill={blossom} />
-        <circle cx="-14" cy="-20" r="13" fill={blossom} opacity="0.95" />
-        <circle cx="14" cy="-20" r="13" fill={blossom} opacity="0.95" />
-        <circle cx="0" cy="-40" r="11" fill={blossom} opacity="0.95" />
-        <circle cx="-6" cy="-32" r="6" fill={blossomHi} opacity="0.85" />
-        <circle cx="9" cy="-30" r="5" fill={blossomHi} opacity="0.85" />
-        <circle cx="0" cy="-24" r="2" fill={pearl} filter="url(#pearlGlow)" />
-        <circle cx="-10" cy="-18" r="1.8" fill={pearl} filter="url(#pearlGlow)" />
-        <circle cx="10" cy="-22" r="1.8" fill={pearl} filter="url(#pearlGlow)" />
-        <circle cx="-5" cy="-35" r="1.5" fill={pearl} filter="url(#pearlGlow)" />
-        <circle cx="7" cy="-36" r="1.6" fill={pearl} filter="url(#pearlGlow)" />
-        <circle cx="-2" cy="-15" r="1.4" fill={pearl} filter="url(#pearlGlow)" />
+        {/* Green canopy */}
+        <circle cx="0" cy="-26" r="22" fill={leaf} />
+        <circle cx="-14" cy="-20" r="13" fill={leaf} opacity="0.95" />
+        <circle cx="14" cy="-20" r="13" fill={leaf} opacity="0.95" />
+        <circle cx="0" cy="-40" r="11" fill={leaf} opacity="0.95" />
+        <circle cx="-6" cy="-32" r="6" fill={leafHi} opacity="0.85" />
+        <circle cx="9" cy="-30" r="5" fill={leafHi} opacity="0.85" />
+        {/* Bright blossoms */}
+        <circle cx="-8" cy="-30" r="2.6" fill={blossom} filter="url(#pearlGlow)" />
+        <circle cx="6" cy="-34" r="2.4" fill={blossom} filter="url(#pearlGlow)" />
+        <circle cx="-2" cy="-22" r="2.2" fill={blossom} filter="url(#pearlGlow)" />
+        <circle cx="11" cy="-22" r="2.3" fill={blossom} filter="url(#pearlGlow)" />
+        <circle cx="-12" cy="-18" r="2" fill={blossom} filter="url(#pearlGlow)" />
+        <circle cx="2" cy="-40" r="2" fill={blossom} filter="url(#pearlGlow)" />
+        <circle cx="-4" cy="-12" r="1.8" fill={blossom} filter="url(#pearlGlow)" />
       </g>
     );
   }
@@ -634,39 +647,45 @@ const TREE_SLOTS: Array<{ x: number; y: number }> = [
 ];
 
 function buildTrees(level: number, entriesCount: number) {
-  const base = [0, 2, 5, 9, 13, 15][level];
-  const total = Math.min(TREE_SLOTS.length, base + entriesCount);
+  const base = [0, 3, 7, 12, 16, 20][level];
+  // 2 trees per entry — instantly visible growth
+  const total = Math.min(TREE_SLOTS.length, base + entriesCount * 2);
   return TREE_SLOTS.slice(0, total).map((s, i) => {
     let variant: TreeVariant = "oak";
     if (i < base) {
-      if (level === 1) variant = "stump";
-      else if (level === 2) variant = i < 2 ? "sapling" : "stump";
+      if (level === 1) variant = i < 1 ? "sapling" : "stump";
+      else if (level === 2) variant = i < 3 ? "sapling" : "oak";
       else if (level === 3) variant = i % 4 === 0 ? "blossom" : i % 3 === 0 ? "pine" : "oak";
       else if (level === 4) variant = i % 3 === 0 ? "blossom" : i % 2 === 0 ? "oak" : "pine";
       else variant = i % 2 === 0 ? "blossom" : i % 3 === 0 ? "pine" : "oak";
     } else {
-      const order: TreeVariant[] = ["sapling", "oak", "pine", "blossom", "oak", "pine"];
+      const order: TreeVariant[] = ["sapling", "oak", "blossom", "pine", "oak", "blossom"];
       variant = order[(i - base) % order.length];
     }
+    const palette =
+      variant === "blossom"
+        ? BLOSSOM_PALETTES[i % BLOSSOM_PALETTES.length]
+        : VIBRANT_PALETTES[i % VIBRANT_PALETTES.length];
     return {
       ...s,
       idx: i,
       variant,
-      palette: VIBRANT_PALETTES[i % VIBRANT_PALETTES.length],
-      scale: 0.68 + (level / 5) * 0.48 + (i % 3) * 0.05,
+      palette,
+      scale: 0.72 + (level / 5) * 0.5 + (i % 3) * 0.06,
     };
   });
 }
 
 function buildFlowers(level: number, entriesCount: number) {
-  const colors = ["#ff5e8a", "#ffd166", "#c084fc", "#ff9f6b", "#5ac8ff", "#ff8ad2"];
-  const base = [0, 2, 10, 22, 36, 56][level];
-  const n = Math.min(80, base + entriesCount * 3);
+  // Bright pink, white, bright yellow, shiny red
+  const colors = ["#ff4d8d", "#ffffff", "#ffe14a", "#ff2e3f", "#ff8ad2", "#fff7a8"];
+  const base = [0, 4, 14, 28, 44, 64][level];
+  const n = Math.min(90, base + entriesCount * 4);
   return Array.from({ length: n }).map((_, i) => ({
     x: 180 + ((i * 53) % 460),
     y: 280 + ((i * 31) % 200),
     color: colors[i % colors.length],
-    type: (i % 4 === 0 ? "grass" : "flower") as "flower" | "grass",
+    type: (i % 5 === 0 ? "grass" : "flower") as "flower" | "grass",
   }));
 }
 
@@ -685,9 +704,9 @@ function buildAnimals(level: number) {
 }
 
 function buildButterflies(level: number) {
-  const n = [0, 2, 4, 6, 9, 13][level];
-  const colors = ["#ff5e8a", "#ffd166", "#a78bfa", "#fb923c", "#34d399", "#5ac8ff", "#f472b6"];
-  const accents = ["#ffd166", "#ff5e8a", "#5ac8ff", "#fff58a", "#a78bfa", "#34d399", "#fff"];
+  const n = [0, 2, 5, 8, 11, 14][level];
+  const colors = ["#ff4d8d", "#ffe14a", "#a78bfa", "#ff2e3f", "#34d399", "#5ac8ff", "#ffffff"];
+  const accents = ["#ffe14a", "#ff4d8d", "#5ac8ff", "#fff58a", "#a78bfa", "#34d399", "#ff8ad2"];
   return Array.from({ length: n }).map((_, i) => ({
     left: 10 + ((i * 17) % 75),
     top: 30 + ((i * 13) % 45),
@@ -707,8 +726,7 @@ function buildBirds(level: number) {
 
 function buildDebris(level: number) {
   if (level > 1) return [];
-  const n = 5;
-  return Array.from({ length: n }).map((_, i) => ({
+  return Array.from({ length: 3 }).map((_, i) => ({
     x: 220 + ((i * 71) % 360),
     y: 330 + ((i * 47) % 130),
     r: (i * 37) % 180,
@@ -716,8 +734,8 @@ function buildDebris(level: number) {
 }
 
 function buildMushrooms(entriesCount: number) {
-  const n = Math.min(12, Math.floor(entriesCount / 2));
-  const colors = ["#ff5e5e", "#ff9f6b", "#c084fc", "#ffd166"];
+  const n = Math.min(14, Math.floor(entriesCount));
+  const colors = ["#ff5e5e", "#ffffff", "#ffe14a", "#ff4d8d"];
   return Array.from({ length: n }).map((_, i) => ({
     x: 210 + ((i * 67) % 380),
     y: 360 + ((i * 41) % 110),
