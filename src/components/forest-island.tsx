@@ -647,39 +647,45 @@ const TREE_SLOTS: Array<{ x: number; y: number }> = [
 ];
 
 function buildTrees(level: number, entriesCount: number) {
-  const base = [0, 2, 5, 9, 13, 15][level];
-  const total = Math.min(TREE_SLOTS.length, base + entriesCount);
+  const base = [0, 3, 7, 12, 16, 20][level];
+  // 2 trees per entry — instantly visible growth
+  const total = Math.min(TREE_SLOTS.length, base + entriesCount * 2);
   return TREE_SLOTS.slice(0, total).map((s, i) => {
     let variant: TreeVariant = "oak";
     if (i < base) {
-      if (level === 1) variant = "stump";
-      else if (level === 2) variant = i < 2 ? "sapling" : "stump";
+      if (level === 1) variant = i < 1 ? "sapling" : "stump";
+      else if (level === 2) variant = i < 3 ? "sapling" : "oak";
       else if (level === 3) variant = i % 4 === 0 ? "blossom" : i % 3 === 0 ? "pine" : "oak";
       else if (level === 4) variant = i % 3 === 0 ? "blossom" : i % 2 === 0 ? "oak" : "pine";
       else variant = i % 2 === 0 ? "blossom" : i % 3 === 0 ? "pine" : "oak";
     } else {
-      const order: TreeVariant[] = ["sapling", "oak", "pine", "blossom", "oak", "pine"];
+      const order: TreeVariant[] = ["sapling", "oak", "blossom", "pine", "oak", "blossom"];
       variant = order[(i - base) % order.length];
     }
+    const palette =
+      variant === "blossom"
+        ? BLOSSOM_PALETTES[i % BLOSSOM_PALETTES.length]
+        : VIBRANT_PALETTES[i % VIBRANT_PALETTES.length];
     return {
       ...s,
       idx: i,
       variant,
-      palette: VIBRANT_PALETTES[i % VIBRANT_PALETTES.length],
-      scale: 0.68 + (level / 5) * 0.48 + (i % 3) * 0.05,
+      palette,
+      scale: 0.72 + (level / 5) * 0.5 + (i % 3) * 0.06,
     };
   });
 }
 
 function buildFlowers(level: number, entriesCount: number) {
-  const colors = ["#ff5e8a", "#ffd166", "#c084fc", "#ff9f6b", "#5ac8ff", "#ff8ad2"];
-  const base = [0, 2, 10, 22, 36, 56][level];
-  const n = Math.min(80, base + entriesCount * 3);
+  // Bright pink, white, bright yellow, shiny red
+  const colors = ["#ff4d8d", "#ffffff", "#ffe14a", "#ff2e3f", "#ff8ad2", "#fff7a8"];
+  const base = [0, 4, 14, 28, 44, 64][level];
+  const n = Math.min(90, base + entriesCount * 4);
   return Array.from({ length: n }).map((_, i) => ({
     x: 180 + ((i * 53) % 460),
     y: 280 + ((i * 31) % 200),
     color: colors[i % colors.length],
-    type: (i % 4 === 0 ? "grass" : "flower") as "flower" | "grass",
+    type: (i % 5 === 0 ? "grass" : "flower") as "flower" | "grass",
   }));
 }
 
@@ -698,9 +704,9 @@ function buildAnimals(level: number) {
 }
 
 function buildButterflies(level: number) {
-  const n = [0, 2, 4, 6, 9, 13][level];
-  const colors = ["#ff5e8a", "#ffd166", "#a78bfa", "#fb923c", "#34d399", "#5ac8ff", "#f472b6"];
-  const accents = ["#ffd166", "#ff5e8a", "#5ac8ff", "#fff58a", "#a78bfa", "#34d399", "#fff"];
+  const n = [0, 2, 5, 8, 11, 14][level];
+  const colors = ["#ff4d8d", "#ffe14a", "#a78bfa", "#ff2e3f", "#34d399", "#5ac8ff", "#ffffff"];
+  const accents = ["#ffe14a", "#ff4d8d", "#5ac8ff", "#fff58a", "#a78bfa", "#34d399", "#ff8ad2"];
   return Array.from({ length: n }).map((_, i) => ({
     left: 10 + ((i * 17) % 75),
     top: 30 + ((i * 13) % 45),
@@ -720,8 +726,7 @@ function buildBirds(level: number) {
 
 function buildDebris(level: number) {
   if (level > 1) return [];
-  const n = 5;
-  return Array.from({ length: n }).map((_, i) => ({
+  return Array.from({ length: 3 }).map((_, i) => ({
     x: 220 + ((i * 71) % 360),
     y: 330 + ((i * 47) % 130),
     r: (i * 37) % 180,
@@ -729,8 +734,8 @@ function buildDebris(level: number) {
 }
 
 function buildMushrooms(entriesCount: number) {
-  const n = Math.min(12, Math.floor(entriesCount / 2));
-  const colors = ["#ff5e5e", "#ff9f6b", "#c084fc", "#ffd166"];
+  const n = Math.min(14, Math.floor(entriesCount));
+  const colors = ["#ff5e5e", "#ffffff", "#ffe14a", "#ff4d8d"];
   return Array.from({ length: n }).map((_, i) => ({
     x: 210 + ((i * 67) % 380),
     y: 360 + ((i * 41) % 110),
