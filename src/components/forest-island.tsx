@@ -512,12 +512,20 @@ type TreePalette = {
 };
 
 const VIBRANT_PALETTES: TreePalette[] = [
-  { trunk: "#7a4a23", leaf: "#34d17a", leafHi: "#7ff0a8", pearl: "#fff5e0" },
-  { trunk: "#7a4a23", leaf: "#2d9a5c", leafHi: "#5fd88a", pearl: "#ffffff" },
+  { trunk: "#7a4a23", leaf: "#34d17a", leafHi: "#7ff0a8", pearl: "#ffffff" },
+  { trunk: "#6a4120", leaf: "#2d9a5c", leafHi: "#5fd88a", pearl: "#ffffff" },
   { trunk: "#7a4a23", leaf: "#4caf50", leafHi: "#8ce082", pearl: "#fffacd" },
-  { trunk: "#5a3a1c", leaf: "#22c073", leafHi: "#7ce39a", pearl: "#fff58a" },
+  { trunk: "#5a3a1c", leaf: "#22c073", leafHi: "#7ce39a", pearl: "#ffffff" },
   { trunk: "#7a4a23", leaf: "#1db954", leafHi: "#6de89a", pearl: "#ffffff" },
   { trunk: "#7a4a23", leaf: "#3cb371", leafHi: "#7fdfb4", pearl: "#f0fff0" },
+];
+
+// Blossom-only palette: green canopy + colorful flower clusters on top
+const BLOSSOM_PALETTES = [
+  { trunk: "#7a4a23", leaf: "#2d9a5c", leafHi: "#5fd88a", blossom: "#ff4d8d" }, // bright pink
+  { trunk: "#7a4a23", leaf: "#34d17a", leafHi: "#7ff0a8", blossom: "#ffffff" }, // white
+  { trunk: "#7a4a23", leaf: "#22c073", leafHi: "#7ce39a", blossom: "#ffe14a" }, // bright yellow
+  { trunk: "#7a4a23", leaf: "#3cb371", leafHi: "#7fdfb4", blossom: "#ff2e3f" }, // shiny red
 ];
 
 function Tree({
