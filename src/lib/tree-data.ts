@@ -125,10 +125,10 @@ export const QUESTIONS = [
 ];
 
 export const MISSIONS = [
-  { id: "plastic-free", title: "Plastic-Free Week", reward: "Rare Fox", emoji: "🦊", goal: 7, progress: 3 },
-  { id: "green-commute", title: "Green Commute Challenge", reward: "Bluebird", emoji: "🚲", goal: 5, progress: 4 },
-  { id: "water-saver", title: "Water Saver Challenge", reward: "Morning Dew", emoji: "💧", goal: 7, progress: 5 },
-  { id: "plant-meals", title: "Plant-Based Streak", reward: "Cherry Blossom", emoji: "🌸", goal: 5, progress: 2 },
+  { id: "plastic-free", title: "Plastic-Free Week", reward: "Unlock Wildflowers", emoji: "🌸", goal: 7, progress: 3 },
+  { id: "green-commute", title: "Green Commute Challenge", reward: "Unlock Butterfly Swarm", emoji: "🦋", goal: 5, progress: 4 },
+  { id: "water-saver", title: "Water Saver Challenge", reward: "Unlock Bluebird Nest", emoji: "🐦", goal: 7, progress: 5 },
+  { id: "plant-meals", title: "Plant-Based Streak", reward: "Unlock Fireflies", emoji: "✨", goal: 5, progress: 2 },
 ];
 
 export const COMMUNITY_FORESTS = [
