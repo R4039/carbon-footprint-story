@@ -59,8 +59,11 @@ function Dashboard() {
     const recent = [...state.logs.slice(0, 7), ...history.entries.slice(0, 7)];
     const scores = recent.map((r) => ("score" in r ? r.score : Math.min(100, 40 + (r.xp ?? 0))));
     const avg = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : 55;
-    const lvl: 1 | 2 | 3 | 4 | 5 =
-      avg >= 80 ? 5 : avg >= 65 ? 4 : avg >= 50 ? 3 : avg >= 30 ? 2 : 1;
+    // Faster level progression — level boosted by entries as well
+    const entryBoost = Math.min(2, Math.floor((state.logs.length + history.entries.length) / 3));
+    let lvl: 1 | 2 | 3 | 4 | 5 =
+      avg >= 70 ? 5 : avg >= 55 ? 4 : avg >= 40 ? 3 : avg >= 25 ? 2 : 1;
+    lvl = Math.min(5, lvl + entryBoost) as 1 | 2 | 3 | 4 | 5;
     const monthIdx = new Date().getMonth();
     const seasonIdx = Math.floor(((monthIdx + 1) % 12) / 3);
     return {
@@ -71,8 +74,9 @@ function Dashboard() {
     };
   }, [state.logs, history.entries, state.butterflies, state.birds]);
 
-  const treesGrown = [0, 2, 5, 9, 13, 15][forestLevel] + entriesCount;
+  const treesGrown = [0, 3, 7, 12, 16, 20][forestLevel] + entriesCount * 2;
   const wildlife = state.butterflies + state.birds + (forestLevel >= 3 ? 2 : 0) + (forestLevel >= 4 ? 3 : 0);
+  const waterSaved = Math.round(entriesCount * 18 + state.streak * 4);
 
   const achievements = useMemo(() => [
     { id: "sapling", icon: "🌱", label: "First Sapling", unlocked: entriesCount >= 1 },
